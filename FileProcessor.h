@@ -1,14 +1,17 @@
-typedef void (CALLBACK *PROCESSCALLBACK)(WCHAR* result);
+#include "encodings.interface.h"
+
+typedef void (CALLBACK *RESULTCALLBACK)(WCHAR* result);
 typedef void (CALLBACK *PROGRESSCALLBACK)(int progress);
-typedef void (CALLBACK *PROGRESSJOBSIZE)(int size);
 
 typedef struct tagPROCESSFILE
 {
 	LPWSTR fileName;
 	int minLength;
-	PROCESSCALLBACK callback;
+	RESULTCALLBACK callback;
 	PROGRESSCALLBACK progressUpdated;
-	PROGRESSJOBSIZE setJobSize;
+	PROGRESSCALLBACK setJobSize;
+	FETCHCHAR fetchChar;
+	DECODESTRING decodeString;
 } PROCESSFILE, *PPROCESSFILE;
 
 DWORD WINAPI ProcessFile(LPVOID arg);

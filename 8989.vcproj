@@ -280,11 +280,19 @@
 			Name="Encodings"
 			>
 			<File
-				RelativePath=".\encodings.cpp"
+				RelativePath=".\encodings.h"
 				>
 			</File>
 			<File
-				RelativePath=".\encodings.h"
+				RelativePath=".\encodings.interface.h"
+				>
+			</File>
+			<File
+				RelativePath=".\encodings.utf16.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\encodings.utf8.cpp"
 				>
 			</File>
 		</Filter>

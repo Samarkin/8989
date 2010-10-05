@@ -1,12 +1,12 @@
 #include "stdafx.h"
 #include "encodings.h"
 
+// Decodes null-terminated Windows-1251 string
 LPWSTR DecodeFromWin1251(LPSTR lpStr) {
 	// TODO: Implement
 	return NULL;
 }
 
-const int BUFLEN = 3;
 // fetch char from utf-8 byte sequence
 //   buf - sequence
 //   ch - resulting symbol (!)
@@ -73,6 +73,7 @@ BOOL FetchUtf8Char(CHAR* buf, WCHAR& ch, int bytes) {
 	}
 }
 
+// Decodes null-terminated UTF-8 string
 LPWSTR DecodeFromUtf8(LPSTR lpStr) {
 	int len = 0;
 	for(char* lpc = lpStr; *lpc; lpc++) {
@@ -92,8 +93,4 @@ LPWSTR DecodeFromUtf8(LPSTR lpStr) {
 	}
 	*buf1 = (WCHAR)0;
 	return buf;
-}
-
-LPWSTR DecodeFromUtf16LE(LPSTR lpStr) {
-	return (LPWSTR)lpStr;
 }

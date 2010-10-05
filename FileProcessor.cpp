@@ -1,13 +1,17 @@
 #include "stdafx.h"
 #include "FileProcessor.h"
-#include "encodings.h"
 
 #define BLOCKBITS 12
-#define BLOCKSIZE (1 << 12)
+#define BLOCKSIZE (1 << BLOCKBITS)
 
 DWORD WINAPI ProcessFile(LPVOID arg) {
 	// TODO: Strange Panic
 	PPROCESSFILE pf = (PPROCESSFILE)arg;
+	if(!pf->callback || !pf->fetchChar || !pf->decodeString) {
+		delete pf;
+		ExitThread(-1);
+		return -1;
+	}
 	HANDLE file = CreateFile(pf->fileName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, 0);
 	if(file == INVALID_HANDLE_VALUE) {
 		DWORD err = ErrorReport(L"openning file", false);
@@ -34,7 +38,7 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 		ExitThread(-1);
 		return -1;
 	}
-	pf->setJobSize(sz32);
+	if(pf->setJobSize) pf->setJobSize(sz32);
 	CHAR* buf = new CHAR[BLOCKSIZE];
 	DWORD read = 0;
 	long len = 0;
@@ -46,11 +50,10 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 	int blocks = 0;
 	// block reading
 	while(ReadFile(file, buf, BLOCKSIZE, &read, 0)) {
-		pf->progressUpdated(blocks++);
+		if(pf->progressUpdated) pf->progressUpdated(blocks++);
 		if(!read) break;
 		// update progress (but not very often)
-		//if(!(blocks & 0xF))
-		//	pf->progressUpdated(100*blocks / sz32);
+
 		// block scanning
 		for(int i = 0; i < read; i++) {
 			if(bytes < 3) ++bytes;
@@ -61,7 +64,7 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 			prev[2] = ch;
 			// fetch char
 			WCHAR wch;
-			int bPrev = FetchUtf8Char(prev, wch, bytes);
+			int bPrev = pf->fetchChar(prev, wch, bytes);
 			isLetter = (wch >= L'a' && wch <= L'z') || (wch >= L'A' && wch <= L'Z')
 				|| (wch >= L'à' && wch <= L'ÿ') || (wch >= L'À' && wch <= L'ß')
 				|| (wch >= L'0' && wch <= L'9');
@@ -79,7 +82,7 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 					// the simpliest variant - if entire string is already in memory
 					if(len <= i) {
 						// just use it (with null-symbol)
-						LPWSTR tmp = DecodeFromUtf8((CHAR*)(buf+(i-len)));
+						LPWSTR tmp = pf->decodeString((CHAR*)(buf+(i-len)));
 						pf->callback(tmp);
 						//delete tmp;
 					}
@@ -93,7 +96,7 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 						// read memory block
 						ReadFile(file, tmp, len+1, &i, NULL);
 						// decode it
-						LPWSTR wtmp = DecodeFromUtf8(tmp);
+						LPWSTR wtmp = pf->decodeString(tmp);
 						// process decoded result and clear memory
 						delete tmp;
 						pf->callback(wtmp);

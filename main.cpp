@@ -7,6 +7,7 @@
 #include "FileProcessor.h"
 #include "commctrl.h"
 #include "shellapi.h"
+#include "encodings.h"
 
 #define MAX_LOADSTRING 100
 #define IDM_LISTBOX 201
@@ -200,6 +201,8 @@ void startProcess()
 	pf->callback = &ProcessorCallback;
 	pf->progressUpdated = &ProcessorProgress;
 	pf->setJobSize = &ProcessorJobSize;
+	pf->fetchChar = &FetchUtf8Char;
+	pf->decodeString = &DecodeFromUtf8;
 	hThread = CreateThread(NULL, 0, &ProcessFile, pf, 0, NULL);
 	// disable start button
 	SetStartButtonState(false);

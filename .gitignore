@@ -1,0 +1,9 @@
+[Rr]elease/
+[Dd]ebug/
+[Bb]in/
+[Oo]bj/
+_ReSharper.*/
+*.ncb
+*.aps
+*.suo
+*.user

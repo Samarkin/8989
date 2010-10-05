@@ -203,6 +203,8 @@ void startProcess()
 	pf->setJobSize = &ProcessorJobSize;
 	pf->fetchChar = &FetchUtf8Char;
 	pf->decodeString = &DecodeFromUtf8;
+	//pf->fetchChar = &FetchUtf16LEChar;
+	//pf->decodeString = &DecodeFromUtf16LE;
 	hThread = CreateThread(NULL, 0, &ProcessFile, pf, 0, NULL);
 	// disable start button
 	SetStartButtonState(false);

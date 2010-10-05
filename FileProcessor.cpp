@@ -76,25 +76,26 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 				(isLetter || wch == '(' || wch == ')' || wch == '$' || wch == '_'
 				|| wch == ',' || wch == '-' || wch == L' ');
 			if(!bPrev) bPrev = 1;
-			if(isStr[3-bPrev] && ch == '\0') {
+			if(isStr[3-bPrev] && wch == L'\0') {
+				len += bPrev;
 				// if string has no letter or too short - fuck it
 				if(contLetters && effLen >= pf->minLength) {
 					// the simpliest variant - if entire string is already in memory
 					if(len <= i) {
 						// just use it (with null-symbol)
-						LPWSTR tmp = pf->decodeString((CHAR*)(buf+(i-len)));
+						LPWSTR tmp = pf->decodeString((CHAR*)(buf+(i-len+1)));
 						pf->callback(tmp);
 						//delete tmp;
 					}
 					// well... uhm... here we need to re-read
 					else {
 						// seek for len characters back
-						SetFilePointer(file, (-(int)read+i)-len, NULL, FILE_CURRENT);
+						SetFilePointer(file, (-(int)read+i)-len+1, NULL, FILE_CURRENT);
 						// allocate memory
-						CHAR* tmp = new CHAR[len+1];
+						CHAR* tmp = new CHAR[len];
 						DWORD i;
 						// read memory block
-						ReadFile(file, tmp, len+1, &i, NULL);
+						ReadFile(file, tmp, len, &i, NULL);
 						// decode it
 						LPWSTR wtmp = pf->decodeString(tmp);
 						// process decoded result and clear memory

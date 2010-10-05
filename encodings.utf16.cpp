@@ -5,7 +5,7 @@ INT FetchUtf16LEChar(CHAR* buf, WCHAR& ch, int bytes)
 {
 	if(bytes >= 2)
 	{
-		ch = ((short)buf[BUFLEN-1] << 8) + buf[BUFLEN-2];
+		ch = *(WCHAR*)(buf + BUFLEN - 2);
 		return 2;
 	}
 	else

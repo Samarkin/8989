@@ -41,6 +41,7 @@ VOID				InitInstance(HINSTANCE, int);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 VOID				openFile(LPWSTR);
+VOID				window_Create(HWND);
 
 int main()
 {
@@ -50,10 +51,6 @@ int main()
 	// get command line
 	LPWSTR cmdLine = GetCommandLine();
 	argv = CommandLineToArgvW(cmdLine, &argc);
-
-	if(argc > 1) {
-		openFile(argv[1]);
-	}
 
  	// TODO: Place code here.
 	MSG msg;
@@ -142,6 +139,12 @@ VOID InitInstance(HINSTANCE hInstance, int nCmdShow)
 		ErrorReport(L"creating main window");
 	}
 
+	window_Create(hWnd);
+
+	if(argc > 1) {
+		openFile(argv[1]);
+	}
+
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
 }
@@ -154,9 +157,10 @@ void SetStartButtonState(bool start)
 	else
 		LoadString(hInst, IDS_STOPBUTTON, buf, MAX_LOADSTRING);
 	SetWindowText(hStartButton, buf);
+	delete buf;
+	// enable Start button
 	LONG style = GetWindowLong(hStartButton, GWL_STYLE);
 	SetWindowLong(hStartButton, GWL_STYLE, style & (~WS_DISABLED));
-	delete buf;
 }
 
 VOID CALLBACK ProcessorCallback(WCHAR* message)
@@ -208,7 +212,7 @@ void startProcess()
 	hThread = CreateThread(NULL, 0, &ProcessFile, pf, 0, NULL);
 	// disable start button
 	SetStartButtonState(false);
-	//
+	// verbose
 	SetWindowText(hStatusBar, L"Child thread started");
 }
 
@@ -277,7 +281,7 @@ void window_Create(HWND hWnd)
 	// Text Box
 	hTextBox = CreateWindowEx(WS_EX_CLIENTEDGE, L"EDIT", L"",
 		WS_VISIBLE | WS_CHILD | ES_AUTOHSCROLL | ES_LEFT | ES_READONLY,
-		330, 10, 200, 25, hWnd, (HMENU)IDM_TEXTBOX, hInst, NULL);
+		330, 10, 200, 23, hWnd, (HMENU)IDM_TEXTBOX, hInst, NULL);
 	if(!hTextBox) ErrorReport(L"creating text box");
 
 	// Status Bar
@@ -293,7 +297,7 @@ void window_Create(HWND hWnd)
 	// Progress Bar
 	hProgressBar = CreateWindowEx(0, PROGRESS_CLASS, NULL,
 		WS_CHILD | WS_VISIBLE,
-		330, 320, 200, 25, hWnd, 0, hInst, NULL);
+		330, 335, 200, 15, hWnd, 0, hInst, NULL);
 
 	// Start Button
 	WCHAR* buf = new WCHAR[MAX_LOADSTRING];
@@ -303,9 +307,7 @@ void window_Create(HWND hWnd)
 		(lpFileName ? 0 : WS_DISABLED),
 		10, 10, 300, 25, hWnd, (HMENU)IDM_STARTBUTTON, hInst, NULL);
 	delete buf;
-	if(!hStartButton) ErrorReport(L"creating боепде button");
-
-	// TODO: wrong title when opening via cmdline
+	if(!hStartButton) ErrorReport(L"creating start button");
 }
 
 //
@@ -324,9 +326,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	switch (message)
 	{
-	case WM_CREATE:
-		window_Create(hWnd);
-		break;
 	case WM_DROPFILES: {
 		WCHAR* lpszFile = new WCHAR[MAX_PATH];
 		HDROP hDrop = (HDROP)wParam;

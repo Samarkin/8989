@@ -50,9 +50,9 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 	int blocks = 0;
 	// block reading
 	while(ReadFile(file, buf, BLOCKSIZE, &read, 0)) {
+		// update progress
 		if(pf->progressUpdated) pf->progressUpdated(blocks++);
 		if(!read) break;
-		// update progress (but not very often)
 
 		// block scanning
 		for(int i = 0; i < read; i++) {
@@ -90,7 +90,10 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 					// well... uhm... here we need to re-read
 					else {
 						// seek for len characters back
-						SetFilePointer(file, (-(int)read+i)-len+1, NULL, FILE_CURRENT);
+						if(SetFilePointer(file, -((int)read-i + len) + 1, NULL, FILE_CURRENT)
+							== INVALID_SET_FILE_POINTER) {
+								goto __read_error;
+						}
 						// allocate memory
 						CHAR* tmp = new CHAR[len];
 						DWORD i;
@@ -102,8 +105,11 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 						delete tmp;
 						pf->callback(wtmp);
 						//delete wtmp;
-						// read next block
-						break;
+						// return file pointer back
+						if(SetFilePointer(file, (int)read - i, NULL, FILE_CURRENT)
+							== INVALID_SET_FILE_POINTER) {
+								goto __read_error;
+						}
 					}
 				}
 			}
@@ -121,6 +127,8 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 			}
 		}
 	}
+
+__read_error:
 	delete buf;
 	ErrorReport(L"reading file",false);
 	if(!CloseHandle(file)) {

@@ -38,6 +38,17 @@ BEGIN
         MENUITEM "&Открыть",                    IDM_OPEN
         MENUITEM "В&ыход",                      IDM_EXIT
     END
+    POPUP "&Настройка"
+    BEGIN
+        POPUP "&Кодировка"
+        BEGIN
+            MENUITEM "UTF-&8",                      ID_ENCODING_UTF
+            MENUITEM "&UCS-2 Little Endian",        ID_ENCODING_UCS2LE
+            MENUITEM "UCS-2 &Big Endian",           ID_ENCODING_UCS2BE
+            MENUITEM "&Windows-1251",               ID_ENCODING_WINDOWS
+            MENUITEM "&KOI8-R",                     ID_ENCODING_KOI8
+        END
+    END
     POPUP "&?"
     BEGIN
         MENUITEM "&О программе ...",            IDM_ABOUT
@@ -88,6 +99,17 @@ BEGIN
     BEGIN
         MENUITEM "&Open",                       IDM_OPEN
         MENUITEM "E&xit",                       IDM_EXIT
+    END
+    POPUP "&Settings"
+    BEGIN
+        POPUP "&Encoding"
+        BEGIN
+            MENUITEM "UTF-&8",                      ID_ENCODING_UTF
+            MENUITEM "&UCS-2 Little Endian",        ID_ENCODING_UCS2LE
+            MENUITEM "UCS-2 &Big Endian",           ID_ENCODING_UCS2BE
+            MENUITEM "&Windows-1251",               ID_ENCODING_WINDOWS
+            MENUITEM "&KOI8-R",                     ID_ENCODING_KOI8
+        END
     END
     POPUP "&Help"
     BEGIN

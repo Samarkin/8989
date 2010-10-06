@@ -13,12 +13,16 @@
 #define IDS_STARTBUTTON                 113
 #define IDS_STOPBUTTON                  114
 #define IDR_MAINFRAME                   128
-#define ID_FILE_OPEN                    32772
-#define ID_OPEN                         32773
 #define IDM_OPEN                        32775
-#define ID_32776                        32776
-#define ID_32777                        32777
-#define ID_32778                        32778
+#define ID_SETTINGS_ENCODING            32779
+#define ID_ENCODING_UTF                 32780
+#define ID_ENCODING_UCS                 32781
+#define ID_ENCODING_UCS32782            32782
+#define ID_ENCODING_WINDOWS             32783
+#define ID_ENCODING_KOI8                32784
+#define ID_ENCODING_UCSBE               32785
+#define ID_ENCODING_UCS2LE              32786
+#define ID_ENCODING_UCS2BE              32787
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -27,7 +31,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        133
-#define _APS_NEXT_COMMAND_VALUE         32779
+#define _APS_NEXT_COMMAND_VALUE         32794
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           110
 #endif

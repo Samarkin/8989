@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "encodings.h"
 
-INT FetchUtf16LEChar(CHAR* buf, WCHAR& ch, int bytes)
+INT FetchUcs2LEChar(CHAR* buf, WCHAR& ch, int bytes)
 {
 	if(bytes >= 2)
 	{
@@ -15,7 +15,7 @@ INT FetchUtf16LEChar(CHAR* buf, WCHAR& ch, int bytes)
 }
 
 // Decodes null-terminated UTF-16 Little Endian string
-LPWSTR DecodeFromUtf16LE(LPSTR lpStr)
+LPWSTR DecodeFromUcs2LE(LPSTR lpStr)
 {
 	return (LPWSTR)lpStr;
 }

@@ -242,10 +242,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource.h"
-				>
-			</File>
-			<File
 				RelativePath=".\stdafx.h"
 				>
 			</File>
@@ -261,6 +257,10 @@
 			>
 			<File
 				RelativePath=".\main.rc"
+				>
+			</File>
+			<File
+				RelativePath=".\Resource.h"
 				>
 			</File>
 		</Filter>
@@ -288,7 +288,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\encodings.utf16.cpp"
+				RelativePath=".\encodings.ucs2.cpp"
 				>
 			</File>
 			<File

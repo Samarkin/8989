@@ -145,6 +145,12 @@ VOID InitInstance(HINSTANCE hInstance, int nCmdShow)
 		openFile(argv[1]);
 	}
 
+	// Main menu
+	HMENU hMenu = GetMenu(hWnd);
+	if(!CheckMenuRadioItem(hMenu, ID_ENCODING_UTF, ID_ENCODING_KOI8, ID_ENCODING_UCS2LE, MF_BYCOMMAND)) {
+		ErrorReport(L"creating menu");
+	}
+
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
 }
@@ -205,8 +211,12 @@ void startProcess()
 	pf->callback = &ProcessorCallback;
 	pf->progressUpdated = &ProcessorProgress;
 	pf->setJobSize = &ProcessorJobSize;
-	pf->fetchChar = &FetchUtf8Char;
-	pf->decodeString = &DecodeFromUtf8;
+
+	// Encodings
+	// TODO
+	
+	//pf->fetchChar = &FetchUtf8Char;
+	//pf->decodeString = &DecodeFromUtf8;
 	//pf->fetchChar = &FetchUtf16LEChar;
 	//pf->decodeString = &DecodeFromUtf16LE;
 	hThread = CreateThread(NULL, 0, &ProcessFile, pf, 0, NULL);
@@ -351,6 +361,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		case IDM_EXIT:
 			DestroyWindow(hWnd);
+			break;
+		// encodings
+		case ID_ENCODING_UTF:
+		case ID_ENCODING_UCS2LE:
+		case ID_ENCODING_UCS2BE:
+		case ID_ENCODING_WINDOWS:
+		case ID_ENCODING_KOI8:
+			CheckMenuRadioItem(GetMenu(hWnd), ID_ENCODING_UTF, ID_ENCODING_KOI8, wmId, MF_BYCOMMAND);
 			break;
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);

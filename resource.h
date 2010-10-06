@@ -14,15 +14,12 @@
 #define IDS_STOPBUTTON                  114
 #define IDR_MAINFRAME                   128
 #define IDM_OPEN                        32775
-#define ID_SETTINGS_ENCODING            32779
-#define ID_ENCODING_UTF                 32780
-#define ID_ENCODING_UCS                 32781
-#define ID_ENCODING_UCS32782            32782
-#define ID_ENCODING_WINDOWS             32783
-#define ID_ENCODING_KOI8                32784
-#define ID_ENCODING_UCSBE               32785
-#define ID_ENCODING_UCS2LE              32786
-#define ID_ENCODING_UCS2BE              32787
+#define ID_SETTINGS_ENCODING            32776
+#define ID_ENCODING_UTF                 32777
+#define ID_ENCODING_UCS2LE              32778
+#define ID_ENCODING_UCS2BE              32779
+#define ID_ENCODING_WINDOWS             32780
+#define ID_ENCODING_KOI8                32781
 #define IDC_STATIC                      -1
 
 // Next default values for new objects

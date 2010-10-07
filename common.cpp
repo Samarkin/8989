@@ -56,7 +56,7 @@ BOOL HeapDeAlloc(LPVOID ptr) {
 BOOL HeapTruncate(LPVOID ptr, SIZE_T size) {
 	LPVOID smth = HeapReAlloc(GetProcessHeap(), 0, ptr, size);
 	if(!smth) {
-		MessageBox(0, L"ќй пиздец", L"", MB_OK);
+		MessageBox(0, L"ќй пиздец", NULL, MB_OK);
 	}
 	return TRUE;
 }

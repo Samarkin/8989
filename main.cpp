@@ -16,22 +16,22 @@
 #define IDM_STARTBUTTON 204
 
 // Global Variables:
-HINSTANCE hInst;								// current instance
-TCHAR szTitle[MAX_LOADSTRING];					// The title bar text
-TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
+HINSTANCE	hInst;								// current instance
+TCHAR		szTitle[MAX_LOADSTRING];				// The title bar text
+TCHAR		szWindowClass[MAX_LOADSTRING];		// the main window class name
 
-HWND hWnd;										// main window handle
-HWND hListBox;									// main listbox handle
-HWND hTextBox;									// info textbox handle
-HWND hStatusBar;								// status bar handle
-HWND hStartButton;								// боепде button handle
-HWND hProgressBar;								// progress bar handle
+HWND		hWnd;								// main window handle
+HWND		hListBox;							// main listbox handle
+HWND		hTextBox;							// info textbox handle
+HWND		hStatusBar;							// status bar handle
+HWND		hStartButton;						// боепде button handle
+HWND		hProgressBar;						// progress bar handle
 
-HANDLE hThread;									// child thread handle
+DWORD		dwEncoding;							// selected encoding
+HANDLE		hThread;							// child thread handle
+LPWSTR		lpFileName;							// name of openned file
 
-LPWSTR lpFileName;								// name of openned file
-
-// command line
+// command line arguments
 INT			argc;
 WCHAR**		argv;
 
@@ -52,7 +52,6 @@ int main()
 	LPWSTR cmdLine = GetCommandLine();
 	argv = CommandLineToArgvW(cmdLine, &argc);
 
- 	// TODO: Place code here.
 	MSG msg;
 	HACCEL hAccelTable;
 
@@ -147,7 +146,8 @@ VOID InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 	// Main menu
 	HMENU hMenu = GetMenu(hWnd);
-	if(!CheckMenuRadioItem(hMenu, ID_ENCODING_UTF, ID_ENCODING_KOI8, ID_ENCODING_UCS2LE, MF_BYCOMMAND)) {
+	dwEncoding = ID_ENCODING_UCS2LE;
+	if(!CheckMenuRadioItem(hMenu, ID_ENCODING_UTF, ID_ENCODING_KOI8, dwEncoding, MF_BYCOMMAND)) {
 		ErrorReport(L"creating menu");
 	}
 
@@ -213,12 +213,21 @@ void startProcess()
 	pf->setJobSize = &ProcessorJobSize;
 
 	// Encodings
-	// TODO
+	switch(dwEncoding) {
+	case ID_ENCODING_UTF:
+		pf->fetchChar = &FetchUtf8Char;
+		pf->decodeString = &DecodeFromUtf8;
+		break;
+	case ID_ENCODING_UCS2LE:
+		pf->fetchChar = &FetchUcs2LEChar;
+		pf->decodeString = &DecodeFromUcs2LE;
+		break;
+	default:
+		MessageBox(hWnd, L"Sorry, encoding is not supported yet =(", NULL, MB_OK);
+		delete pf;
+		return;
+	}
 	
-	//pf->fetchChar = &FetchUtf8Char;
-	//pf->decodeString = &DecodeFromUtf8;
-	//pf->fetchChar = &FetchUtf16LEChar;
-	//pf->decodeString = &DecodeFromUtf16LE;
 	hThread = CreateThread(NULL, 0, &ProcessFile, pf, 0, NULL);
 	// disable start button
 	SetStartButtonState(false);
@@ -368,6 +377,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case ID_ENCODING_UCS2BE:
 		case ID_ENCODING_WINDOWS:
 		case ID_ENCODING_KOI8:
+			dwEncoding = wmId;
 			CheckMenuRadioItem(GetMenu(hWnd), ID_ENCODING_UTF, ID_ENCODING_KOI8, wmId, MF_BYCOMMAND);
 			break;
 		default:

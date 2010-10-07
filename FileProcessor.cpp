@@ -32,7 +32,7 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 	int sz32 = (sz.LowPart >> BLOCKBITS)
 		+ (sz.HighPart << (32-BLOCKBITS));
 	if(sz.HighPart >> BLOCKBITS) {
-		MessageBox(0, L"File is too big!", L"", MB_OK);
+		MessageBox(0, L"File is too big!", NULL, MB_OK);
 		pf->callback(NULL);
 		delete pf;
 		ExitThread(-1);

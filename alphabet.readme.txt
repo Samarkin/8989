@@ -1,0 +1,20 @@
+Alphabet.cfg file format specification:
+ 1)  lines, starting with + describe letters (neccessary characters)
+ 2)  lines, starting with - describe other characters, can be used in text
+ 3)  lines, starting with other character will be the same line as previous (non-letters, if the first), first character will be ignored
+ 4)  characters <= 0x7F means itself, except \, -, 0x0A and 0x0D. other characters will be ignored
+ 5)  character 0x0D followed by 0x0A means line break
+ 6)  character 0x0D not followed by 0x0A will be ignored
+ 7)  character 0x0A not preceded by 0x0D will be ignored
+ 8)  line breaks will be used later for visual file editing
+ 9)  character \ followed by the:
+     9.1) x????, where ? is hexadecimal digit - means symbol with code 0x???? (called pseudocharacter)
+     9.2) anything else means the following character
+ 10) character - between two characters or pseudocharacters means range
+ 11) character - anywhere else will be ignored
+
+Alphabet.cfg file example:
++A-Za-z
++0-9
+-\x000A\x000D
+-,.=\-\\()

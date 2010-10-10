@@ -296,6 +296,27 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="Alphabet"
+			>
+			<File
+				RelativePath=".\alphabet.cfg"
+				DeploymentContent="true"
+				>
+			</File>
+			<File
+				RelativePath=".\alphabet.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\alphabet.h"
+				>
+			</File>
+			<File
+				RelativePath=".\alphabet.readme.txt"
+				>
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>

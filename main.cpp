@@ -8,6 +8,7 @@
 #include "commctrl.h"
 #include "shellapi.h"
 #include "encodings.h"
+#include "alphabet.h"
 
 #define MAX_LOADSTRING 100
 #define IDM_LISTBOX 201
@@ -213,12 +214,7 @@ void startProcess()
 	pf->progressUpdated = &ProcessorProgress;
 	pf->setJobSize = &ProcessorJobSize;
 
-	for(WCHAR wch = L'A'; wch <= L'Z'; wch++) pf->charmap[wch] = ISLETTER;
-	for(WCHAR wch = L'a'; wch <= L'z'; wch++) pf->charmap[wch] = ISLETTER;
-	for(WCHAR wch = L'0'; wch <= L'9'; wch++) pf->charmap[wch] = ISLETTER;
-
-	pf->charmap[L' '] = ISCHAR;
-	pf->charmap[L'-'] = ISCHAR;
+	LoadAlphabet(pf->charmap);
 
 	// Encodings
 	switch(dwEncoding) {

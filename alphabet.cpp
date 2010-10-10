@@ -37,7 +37,7 @@ void LoadAlphabet(BYTE* charmap) {
 					else {
 						inRange = false;
 						BYTE tmp = true + isLetter;
-						for(WCHAR a = prev; a < ch; a++) {
+						for(WCHAR a = prev; a <= ch; a++) {
 							charmap[a] = tmp;
 						}
 					} // inRange
@@ -66,7 +66,7 @@ void LoadAlphabet(BYTE* charmap) {
 						else {
 							inRange = false;
 							BYTE tmp = true + isLetter;
-							for(WCHAR a = prev; a < ch; a++) {
+							for(WCHAR a = prev; a <= ch; a++) {
 								charmap[a] = tmp;
 							}
 						} // inRange

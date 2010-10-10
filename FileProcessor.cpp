@@ -5,7 +5,7 @@
 #define BLOCKSIZE (1 << BLOCKBITS)
 
 DWORD WINAPI ProcessFile(LPVOID arg) {
-	// TODO: Strange Panic
+	// TODO: Strange Panic in utf-8
 	PPROCESSFILE pf = (PPROCESSFILE)arg;
 	if(!pf->callback || !pf->fetchChar || !pf->decodeString) {
 		delete pf;
@@ -88,7 +88,7 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 						// seek for len characters back
 						if(SetFilePointer(file, -((int)read-i + len) + 1, NULL, FILE_CURRENT)
 							== INVALID_SET_FILE_POINTER) {
-								goto __read_error;
+								goto __loop_end;
 						}
 						// allocate memory
 						CHAR* tmp = new CHAR[len];
@@ -104,7 +104,7 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 						// return file pointer back
 						if(SetFilePointer(file, (int)read - i, NULL, FILE_CURRENT)
 							== INVALID_SET_FILE_POINTER) {
-								goto __read_error;
+								goto __loop_end;
 						}
 					}
 				}
@@ -124,7 +124,7 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 		}
 	}
 
-__read_error:
+__loop_end:
 	delete buf;
 	ErrorReport(L"reading file",false);
 	if(!CloseHandle(file)) {

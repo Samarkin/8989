@@ -206,11 +206,19 @@ void startProcess()
 	SendMessage(hListBox, LB_RESETCONTENT, 0, 0);
 	// process itself
 	PROCESSFILE* pf = new PROCESSFILE;
+	FastFillMemory(pf, sizeof(PROCESSFILE), 0);
 	pf->fileName = lpFileName;
 	pf->minLength = 3;
 	pf->callback = &ProcessorCallback;
 	pf->progressUpdated = &ProcessorProgress;
 	pf->setJobSize = &ProcessorJobSize;
+
+	for(WCHAR wch = L'A'; wch <= L'Z'; wch++) pf->charmap[wch] = ISLETTER;
+	for(WCHAR wch = L'a'; wch <= L'z'; wch++) pf->charmap[wch] = ISLETTER;
+	for(WCHAR wch = L'0'; wch <= L'9'; wch++) pf->charmap[wch] = ISLETTER;
+
+	pf->charmap[L' '] = ISCHAR;
+	pf->charmap[L'-'] = ISCHAR;
 
 	// Encodings
 	switch(dwEncoding) {
@@ -283,7 +291,6 @@ void sel_Changed()
 }
 
 void window_Resized(int width, int height) {
-	//SendMessage(hListBox, 
 
 	// Resize status bar
 	SendMessage(hStatusBar, WM_SIZE, 0, 0);

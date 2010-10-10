@@ -65,16 +65,12 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 			// fetch char
 			WCHAR wch;
 			int bPrev = pf->fetchChar(prev, wch, bytes);
-			isLetter = (wch >= L'a' && wch <= L'z') || (wch >= L'A' && wch <= L'Z')
-				|| (wch >= L'à' && wch <= L'ÿ') || (wch >= L'À' && wch <= L'ß')
-				|| (wch >= L'0' && wch <= L'9');
+			isLetter = pf->charmap[wch] == ISLETTER;
 			// still moving prev
 			isStr[0] = isStr[1];
 			isStr[1] = isStr[2];
 			isStr[2] = isStr[3];
-			isStr[3] = bPrev &&
-				(isLetter || wch == '(' || wch == ')' || wch == '$' || wch == '_'
-				|| wch == ',' || wch == '-' || wch == L' ');
+			isStr[3] = bPrev && pf->charmap[wch];
 			if(!bPrev) bPrev = 1;
 			if(isStr[3-bPrev] && wch == L'\0') {
 				len += bPrev;

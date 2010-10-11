@@ -99,6 +99,9 @@ int main()
 //
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {
+	HANDLE hShell32 = LoadLibraryEx(L"Shell32.dll", NULL, LOAD_LIBRARY_AS_DATAFILE);
+	HICON hIcon = LoadIcon((HINSTANCE)hShell32, MAKEINTRESOURCE(23));
+
 	WNDCLASSEX wcex;
 
 	wcex.cbSize = sizeof(WNDCLASSEX);
@@ -108,7 +111,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 	wcex.cbClsExtra		= 0;
 	wcex.cbWndExtra		= 0;
 	wcex.hInstance		= hInstance;
-	wcex.hIcon			= NULL;
+	wcex.hIcon			= hIcon;
 	wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
 	wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW);
 	wcex.lpszMenuName	= MAKEINTRESOURCE(IDC_MY8989);

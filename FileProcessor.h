@@ -14,11 +14,13 @@ typedef struct tagPROCESSFILE
 {
 	LPWSTR fileName;
 	int minLength;
+	bool nullTerminated;
 	RESULTCALLBACK callback;
 	PROGRESSCALLBACK progressUpdated;
 	PROGRESSCALLBACK setJobSize;
 	FETCHCHAR fetchChar;
 	DECODESTRING decodeString;
+	DECODESZSTRING decodeSzString;
 	CHARSTATE charmap[1 << (sizeof(WCHAR)*8)];
 } PROCESSFILE, *PPROCESSFILE;
 

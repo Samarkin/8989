@@ -223,11 +223,13 @@ void startProcess()
 	switch(dwEncoding) {
 	case ID_ENCODING_UTF:
 		pf->fetchChar = &FetchUtf8Char;
+		pf->decodeSzString = &DecodeSzFromUtf8;
 		pf->decodeString = &DecodeFromUtf8;
 		break;
 	case ID_ENCODING_UCS2LE:
 		pf->fetchChar = &FetchUcs2LEChar;
 		pf->decodeString = &DecodeFromUcs2LE;
+		pf->decodeSzString = &DecodeSzFromUcs2LE;
 		break;
 	default:
 		MessageBox(hWnd, L"Sorry, encoding is not supported yet =(", NULL, MB_OK);

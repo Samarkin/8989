@@ -2,7 +2,7 @@
 #include "encodings.h"
 
 // Decodes null-terminated Windows-1251 string
-LPWSTR DecodeFromWin1251(LPSTR lpStr) {
+LPWSTR DecodeFromWin1251(LPSTR lpStr, int len) {
 	// TODO: Implement
 	return NULL;
 }
@@ -74,7 +74,7 @@ BOOL FetchUtf8Char(CHAR* buf, WCHAR& ch, int bytes) {
 }
 
 // Decodes null-terminated UTF-8 string
-LPWSTR DecodeFromUtf8(LPSTR lpStr) {
+LPWSTR DecodeSzFromUtf8(LPSTR lpStr) {
 	int len = 0;
 	for(char* lpc = lpStr; *lpc; lpc++) {
 		if(!(*lpc & 0x80) // if first bit is zero
@@ -93,4 +93,9 @@ LPWSTR DecodeFromUtf8(LPSTR lpStr) {
 	}
 	*buf1 = (WCHAR)0;
 	return buf;
+}
+
+LPWSTR DecodeFromUtf8(LPSTR lpStr, int len) {
+	// TODO: Implement
+	return NULL;
 }

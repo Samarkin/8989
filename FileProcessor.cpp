@@ -72,14 +72,18 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 			isStr[2] = isStr[3];
 			isStr[3] = bPrev && pf->charmap[wch];
 			if(!bPrev) bPrev = 1;
-			if(isStr[3-bPrev] && wch == L'\0') {
+			bool nullTerm = wch == L'\0';
+			if(isStr[3-bPrev] && (nullTerm || (!pf->nullTerminated && !isStr[3])))
+			{
 				len += bPrev;
 				// if string has no letter or too short - fuck it
 				if(contLetters && effLen >= pf->minLength) {
 					// the simpliest variant - if entire string is already in memory
 					if(len <= i) {
 						// just use it (with null-symbol)
-						LPWSTR tmp = pf->decodeString((CHAR*)(buf+(i-len+1)));
+						LPWSTR tmp = nullTerm
+							? pf->decodeSzString((CHAR*)(buf+(i-len+1)))
+							: pf->decodeString((CHAR*)(buf+(i-len+1)),len-bPrev);
 						pf->callback(tmp);
 						//delete tmp;
 					}
@@ -96,7 +100,9 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 						// read memory block
 						ReadFile(file, tmp, len, &i, NULL);
 						// decode it
-						LPWSTR wtmp = pf->decodeString(tmp);
+						LPWSTR wtmp = nullTerm
+							? pf->decodeSzString(tmp)
+							: pf->decodeString(tmp, len-bPrev);
 						// process decoded result and clear memory
 						delete tmp;
 						pf->callback(wtmp);

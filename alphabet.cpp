@@ -53,9 +53,7 @@ void LoadAlphabet(BYTE* charmap) {
 						else {
 							inRange = false;
 							BYTE tmp = true + isLetter;
-							for(WCHAR a = prev; a <= ch; a++) {
-								charmap[a] = tmp;
-							}
+							FastFillMemory(charmap + prev, newch - prev + 1, tmp);
 						} // ch != 'x'
 					} // inRange
 				} // inEscape
@@ -83,9 +81,7 @@ void LoadAlphabet(BYTE* charmap) {
 							else {
 								inRange = false;
 								BYTE tmp = true + isLetter;
-								for(WCHAR a = prev; a <= newch; a++) {
-									charmap[a] = tmp;
-								}
+								FastFillMemory(charmap + prev, newch - prev + 1, tmp);
 							} // inRange
 						}
 					} // n != 0

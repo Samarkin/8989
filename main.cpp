@@ -32,6 +32,8 @@ DWORD		dwEncoding;							// selected encoding
 HANDLE		hThread;							// child thread handle
 LPWSTR		lpFileName;							// name of openned file
 
+bool		bNullTerm;							// is nullterm checked
+
 // command line arguments
 INT			argc;
 WCHAR**		argv;
@@ -154,6 +156,7 @@ VOID InitInstance(HINSTANCE hInstance, int nCmdShow)
 	if(!CheckMenuRadioItem(hMenu, ID_ENCODING_UTF, ID_ENCODING_KOI8, dwEncoding, MF_BYCOMMAND)) {
 		ErrorReport(L"creating menu");
 	}
+	bNullTerm = false;
 
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
@@ -216,6 +219,7 @@ void startProcess()
 	pf->callback = &ProcessorCallback;
 	pf->progressUpdated = &ProcessorProgress;
 	pf->setJobSize = &ProcessorJobSize;
+	pf->nullTerminated = bNullTerm;
 
 	LoadAlphabet(pf->charmap);
 
@@ -295,6 +299,21 @@ void window_Resized(int width, int height) {
 
 	// Resize status bar
 	SendMessage(hStatusBar, WM_SIZE, 0, 0);
+}
+
+void nullTerm()
+{
+	HMENU hMenu = GetMenu(hWnd);
+	DWORD state = GetMenuState(hMenu, ID_NULLTERM, MF_BYCOMMAND);
+
+	if(state & MF_CHECKED) {
+		bNullTerm = false;
+		CheckMenuItem(hMenu, ID_NULLTERM, MF_UNCHECKED | MF_BYCOMMAND);
+	}
+	else {
+		bNullTerm = true;
+		CheckMenuItem(hMenu, ID_NULLTERM, MF_CHECKED | MF_BYCOMMAND);
+	}
 }
 
 void window_Create(HWND hWnd)
@@ -387,6 +406,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case ID_ENCODING_KOI8:
 			dwEncoding = wmId;
 			CheckMenuRadioItem(GetMenu(hWnd), ID_ENCODING_UTF, ID_ENCODING_KOI8, wmId, MF_BYCOMMAND);
+			break;
+		case ID_NULLTERM:
+			nullTerm();
 			break;
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);

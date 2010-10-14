@@ -48,6 +48,7 @@ BEGIN
             MENUITEM "&Windows-1251",               ID_ENCODING_WINDOWS
             MENUITEM "&KOI8-R",                     ID_ENCODING_KOI8
         END
+        MENUITEM "Оканчивающиеся &0-символом",  ID_NULLTERM
     END
     POPUP "&?"
     BEGIN
@@ -110,6 +111,7 @@ BEGIN
             MENUITEM "&Windows-1251",               ID_ENCODING_WINDOWS
             MENUITEM "&KOI8-R",                     ID_ENCODING_KOI8
         END
+        MENUITEM "&Null-Terminated",            ID_NULLTERM
     END
     POPUP "&Help"
     BEGIN

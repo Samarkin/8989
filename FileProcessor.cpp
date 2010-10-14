@@ -81,11 +81,12 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 					// the simpliest variant - if entire string is already in memory
 					if(len <= i) {
 						// just use it (with null-symbol)
+						LPSTR ptr = (CHAR*)(buf+(i-len+1));
 						LPWSTR tmp = nullTerm
-							? pf->decodeSzString((CHAR*)(buf+(i-len+1)))
-							: pf->decodeString((CHAR*)(buf+(i-len+1)),len-bPrev);
+							? pf->decodeSzString(ptr)
+							: pf->decodeString(ptr, len-bPrev);
 						pf->callback(tmp);
-						//delete tmp;
+						if(ptr != (CHAR*)tmp) delete tmp;
 					}
 					// well... uhm... here we need to re-read
 					else {
@@ -104,9 +105,9 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 							? pf->decodeSzString(tmp)
 							: pf->decodeString(tmp, len-bPrev);
 						// process decoded result and clear memory
-						delete tmp;
 						pf->callback(wtmp);
-						//delete wtmp;
+						if(tmp != (CHAR*)wtmp) delete wtmp;
+						delete tmp;
 						// return file pointer back
 						if(SetFilePointer(file, (int)read - i, NULL, FILE_CURRENT)
 							== INVALID_SET_FILE_POINTER) {

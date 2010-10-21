@@ -83,7 +83,7 @@ LPWSTR DecodeSzFromUtf8(LPSTR lpStr) {
 				len++;
 		}
 	}
-	WCHAR* buf = new WCHAR[len], *buf1 = buf;
+	WCHAR* buf = new WCHAR[len+1], *buf1 = buf;
 	int bytes = 0;
 	for(char* lpc = lpStr; *lpc; lpc++) {
 		if(bytes < 3) ++bytes;
@@ -95,7 +95,24 @@ LPWSTR DecodeSzFromUtf8(LPSTR lpStr) {
 	return buf;
 }
 
-LPWSTR DecodeFromUtf8(LPSTR lpStr, int len) {
-	// TODO: Implement
-	return NULL;
+// Decodes UTF-8 string from specified byte array
+LPWSTR DecodeFromUtf8(LPSTR lpStr, int size) {
+	int len = 0;
+	for(int i = 0; i < size; i++) {
+		if(!(lpStr[i] & 0x80) // if first bit is zero
+			|| (lpStr[i] & 0xc0) == 0xc0) { // or first two is 1
+				// then this is the beginning of symbol
+				len++;
+		}
+	}
+	WCHAR* buf = new WCHAR[len+1], *buf1 = buf;
+	int bytes = 0;
+	for(int i = 0; i < size; i++) {
+		if(bytes < 3) ++bytes;
+		if(FetchUtf8Char((lpStr+i)-BUFLEN+1, *buf1, bytes)) {
+			buf1++;
+		}
+	}
+	*buf1 = (WCHAR)0;
+	return buf;
 }

@@ -65,7 +65,7 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 			// fetch char
 			WCHAR wch;
 			int bPrev = pf->fetchChar(prev, wch, bytes);
-			isLetter = pf->charmap[wch] == ISLETTER;
+			isLetter = bPrev && pf->charmap[wch] == ISLETTER;
 			// still moving prev
 			isStr[0] = isStr[1];
 			isStr[1] = isStr[2];
@@ -80,7 +80,7 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 				if(contLetters && effLen >= pf->minLength) {
 					// the simpliest variant - if entire string is already in memory
 					if(len <= i) {
-						// just use it (with null-symbol)
+						// just use it
 						LPSTR ptr = (CHAR*)(buf+(i-len+1));
 						LPWSTR tmp = nullTerm
 							? pf->decodeSzString(ptr)
@@ -97,9 +97,9 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 						}
 						// allocate memory
 						CHAR* tmp = new CHAR[len];
-						DWORD i;
+						DWORD j;
 						// read memory block
-						ReadFile(file, tmp, len, &i, NULL);
+						ReadFile(file, tmp, len, &j, NULL);
 						// decode it
 						LPWSTR wtmp = nullTerm
 							? pf->decodeSzString(tmp)

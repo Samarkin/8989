@@ -235,6 +235,11 @@ void startProcess()
 		pf->decodeString = &DecodeFromUcs2LE;
 		pf->decodeSzString = &DecodeSzFromUcs2LE;
 		break;
+	case ID_ENCODING_WINDOWS:
+		pf->fetchChar = &FetchWin1251Char;
+		pf->decodeString = &DecodeFromWin1251;
+		pf->decodeSzString = &DecodeSzFromWin1251;
+		break;
 	default:
 		MessageBox(hWnd, L"Sorry, encoding is not supported yet =(", NULL, MB_OK);
 		delete pf;

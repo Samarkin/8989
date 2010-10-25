@@ -1,12 +1,6 @@
 #include "stdafx.h"
 #include "encodings.h"
 
-// Decodes null-terminated Windows-1251 string
-LPWSTR DecodeFromWin1251(LPSTR lpStr, int len) {
-	// TODO: Implement
-	return NULL;
-}
-
 // fetch char from utf-8 byte sequence
 //   buf - sequence
 //   ch - resulting symbol (!)

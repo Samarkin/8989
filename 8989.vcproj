@@ -295,6 +295,10 @@
 				RelativePath=".\encodings.utf8.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\encodings.win1251.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Alphabet"

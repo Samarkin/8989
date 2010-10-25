@@ -10,5 +10,6 @@ LPWSTR DecodeFromWin1251(LPSTR, int);
 LPWSTR DecodeFromUtf8(LPSTR, int);
 LPWSTR DecodeFromUcs2LE(LPSTR, int);
 
+LPWSTR DecodeSzFromWin1251(LPSTR);
 LPWSTR DecodeSzFromUtf8(LPSTR);
 LPWSTR DecodeSzFromUcs2LE(LPSTR);

@@ -240,6 +240,11 @@ void startProcess()
 		pf->decodeString = &DecodeFromWin1251;
 		pf->decodeSzString = &DecodeSzFromWin1251;
 		break;
+	case ID_ENCODING_KOI8:
+		pf->fetchChar = & FetchKoi8Char;
+		pf->decodeString = &DecodeFromKoi8;
+		pf->decodeSzString = &DecodeSzFromKoi8;
+		break;
 	default:
 		MessageBox(hWnd, L"Sorry, encoding is not supported yet =(", NULL, MB_OK);
 		delete pf;

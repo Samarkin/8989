@@ -288,6 +288,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\encodings.koi8.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\encodings.ucs2.cpp"
 				>
 			</File>

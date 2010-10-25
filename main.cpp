@@ -307,8 +307,15 @@ void nullTerm()
 	DWORD state = GetMenuState(hMenu, ID_NULLTERM, MF_BYCOMMAND);
 
 	if(state & MF_CHECKED) {
-		bNullTerm = false;
-		CheckMenuItem(hMenu, ID_NULLTERM, MF_UNCHECKED | MF_BYCOMMAND);
+		if(GetMenuState(hMenu, ID_ENCODING_UTF, MF_BYCOMMAND) & MF_CHECKED) {
+			WCHAR* szMessageText = new WCHAR[MAX_LOADSTRING];
+			LoadString(hInst, IDS_NOTSUPPORTED, szMessageText, MAX_LOADSTRING);
+			MessageBox(hWnd, szMessageText, L"", MB_OK);
+			delete szMessageText;
+		} else {
+			bNullTerm = false;
+			CheckMenuItem(hMenu, ID_NULLTERM, MF_UNCHECKED | MF_BYCOMMAND);
+		}
 	}
 	else {
 		bNullTerm = true;
@@ -400,6 +407,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		// encodings
 		case ID_ENCODING_UTF:
+			bNullTerm = true;
+			CheckMenuItem(GetMenu(hWnd), ID_NULLTERM, MF_CHECKED | MF_BYCOMMAND);
 		case ID_ENCODING_UCS2LE:
 		case ID_ENCODING_UCS2BE:
 		case ID_ENCODING_WINDOWS:

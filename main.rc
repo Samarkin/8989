@@ -72,8 +72,9 @@ END
 STRINGTABLE 
 BEGIN
     IDS_TERMINATETHREAD     "Открытие нового файла прервет обработку текущего. Продолжить?"
-    IDS_STARTBUTTON         "ВПЕРДЕ!"
-    IDS_STOPBUTTON          "ПРЕКРАТИТЕ ЭТО!"
+    IDS_STARTBUTTON         "Начать!"
+    IDS_STOPBUTTON          "Остановить"
+    IDS_NOTSUPPORTED        "Извините, функция не поддерживается."
 END
 
 #endif    // Russian resources
@@ -181,6 +182,7 @@ BEGIN
     IDS_TERMINATETHREAD     "Openning a new file will terminate current job. Are you sure you want to continue?"
     IDS_STARTBUTTON         "Start!"
     IDS_STOPBUTTON          "Stop!"
+    IDS_NOTSUPPORTED        "Sorry! Not supported."
 END
 
 #endif    // English (U.S.) resources

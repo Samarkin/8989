@@ -12,6 +12,7 @@
 #define IDS_TERMINATETHREAD             112
 #define IDS_STARTBUTTON                 113
 #define IDS_STOPBUTTON                  114
+#define IDS_NOTSUPPORTED                115
 #define IDR_MAINFRAME                   128
 #define IDM_OPEN                        32775
 #define ID_SETTINGS_ENCODING            32776

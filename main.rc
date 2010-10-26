@@ -43,8 +43,7 @@ BEGIN
         POPUP "&Кодировка"
         BEGIN
             MENUITEM "UTF-&8",                      ID_ENCODING_UTF
-            MENUITEM "&UCS-2 Little Endian",        ID_ENCODING_UCS2LE
-            MENUITEM "UCS-2 &Big Endian",           ID_ENCODING_UCS2BE
+            MENUITEM "&Unicode UCS-2",              ID_ENCODING_UCS2LE
             MENUITEM "&Windows-1251",               ID_ENCODING_WINDOWS
             MENUITEM "&KOI8-R",                     ID_ENCODING_KOI8
         END
@@ -102,13 +101,12 @@ BEGIN
         MENUITEM "&Open",                       IDM_OPEN
         MENUITEM "E&xit",                       IDM_EXIT
     END
-    POPUP "&Settings"
+    POPUP "S&ettings"
     BEGIN
         POPUP "&Encoding"
         BEGIN
             MENUITEM "UTF-&8",                      ID_ENCODING_UTF
-            MENUITEM "&UCS-2 Little Endian",        ID_ENCODING_UCS2LE
-            MENUITEM "UCS-2 &Big Endian",           ID_ENCODING_UCS2BE
+            MENUITEM "&Unicode UCS-2",              ID_ENCODING_UCS2LE
             MENUITEM "&Windows-1251",               ID_ENCODING_WINDOWS
             MENUITEM "&KOI8-R",                     ID_ENCODING_KOI8
         END
@@ -128,9 +126,9 @@ END
 
 IDC_MY8989 ACCELERATORS 
 BEGIN
-    "^O",           IDM_OPEN,               ASCII,  NOINVERT
     "/",            IDM_ABOUT,              ASCII,  ALT, NOINVERT
     "?",            IDM_ABOUT,              ASCII,  ALT, NOINVERT
+    "^O",           IDM_OPEN,               ASCII,  NOINVERT
 END
 
 

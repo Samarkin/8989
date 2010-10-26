@@ -16,6 +16,8 @@
 #define IDM_STATUSBAR 203
 #define IDM_STARTBUTTON 204
 
+#define SIDE_SPACE 10							// minimal distance between corner and the closest element
+
 // Global Variables:
 HINSTANCE	hInst;								// current instance
 TCHAR		szTitle[MAX_LOADSTRING];				// The title bar text
@@ -305,12 +307,6 @@ void sel_Changed()
 	}
 }
 
-void window_Resized(int width, int height) {
-
-	// Resize status bar
-	SendMessage(hStatusBar, WM_SIZE, 0, 0);
-}
-
 void nullTerm()
 {
 	HMENU hMenu = GetMenu(hWnd);
@@ -333,18 +329,37 @@ void nullTerm()
 	}
 }
 
+#define FIRST_ROW	25
+#define PROGRESS_HEIGHT	15
+void window_Resized(int width, int height)
+{
+	int stHeight = 15;
+
+	int colWidth = (width - 4*SIDE_SPACE)/2;
+
+	// Rearrage elements
+	MoveWindow(hStartButton, SIDE_SPACE, SIDE_SPACE, colWidth, FIRST_ROW, TRUE);
+	MoveWindow(hListBox, SIDE_SPACE, SIDE_SPACE*2 + FIRST_ROW, colWidth, height - stHeight - 3*SIDE_SPACE - FIRST_ROW, TRUE);
+
+	MoveWindow(hTextBox, SIDE_SPACE*3 + colWidth, SIDE_SPACE+1, (width - 4*SIDE_SPACE)/2, FIRST_ROW-2, TRUE);
+	MoveWindow(hProgressBar, SIDE_SPACE*3 + colWidth, height - stHeight - 2*SIDE_SPACE - PROGRESS_HEIGHT, colWidth, PROGRESS_HEIGHT, TRUE);
+
+	// Resize status bar
+	SendMessage(hStatusBar, WM_SIZE, 0, 0);
+}
+
 void window_Create(HWND hWnd)
 {
 	// List Box
 	hListBox = CreateWindow(L"LISTBOX", L"",
 		WS_BORDER | WS_VISIBLE | WS_CHILD | LBS_HASSTRINGS | LBS_NOTIFY | WS_VSCROLL,
-		10, 45, 300, 310, hWnd, (HMENU)IDM_LISTBOX, hInst, NULL);
+		0, 0, 0, 0, hWnd, (HMENU)IDM_LISTBOX, hInst, NULL);
 	if(!hListBox) ErrorReport(L"creating list box");
 
 	// Text Box
 	hTextBox = CreateWindowEx(WS_EX_CLIENTEDGE, L"EDIT", L"",
 		WS_VISIBLE | WS_CHILD | ES_AUTOHSCROLL | ES_LEFT | ES_READONLY,
-		330, 10, 200, 23, hWnd, (HMENU)IDM_TEXTBOX, hInst, NULL);
+		0, 0, 0, 0, hWnd, (HMENU)IDM_TEXTBOX, hInst, NULL);
 	if(!hTextBox) ErrorReport(L"creating text box");
 
 	// Status Bar
@@ -360,7 +375,7 @@ void window_Create(HWND hWnd)
 	// Progress Bar
 	hProgressBar = CreateWindowEx(0, PROGRESS_CLASS, NULL,
 		WS_CHILD | WS_VISIBLE,
-		330, 335, 200, 15, hWnd, 0, hInst, NULL);
+		0, 0, 0, 0, hWnd, 0, hInst, NULL);
 
 	// Start Button
 	WCHAR* buf = new WCHAR[MAX_LOADSTRING];
@@ -368,7 +383,7 @@ void window_Create(HWND hWnd)
 	hStartButton = CreateWindow(L"BUTTON", buf,
 		WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON |
 		(lpFileName ? 0 : WS_DISABLED),
-		10, 10, 300, 25, hWnd, (HMENU)IDM_STARTBUTTON, hInst, NULL);
+		0, 0, 0, 0, hWnd, (HMENU)IDM_STARTBUTTON, hInst, NULL);
 	delete buf;
 	if(!hStartButton) ErrorReport(L"creating start button");
 }

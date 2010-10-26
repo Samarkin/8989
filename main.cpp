@@ -166,6 +166,7 @@ VOID InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 void SetStartButtonState(bool start)
 {
+	// change text
 	WCHAR* buf = new WCHAR[MAX_LOADSTRING];
 	if(start)
 		LoadString(hInst, IDS_STARTBUTTON, buf, MAX_LOADSTRING);
@@ -173,9 +174,13 @@ void SetStartButtonState(bool start)
 		LoadString(hInst, IDS_STOPBUTTON, buf, MAX_LOADSTRING);
 	SetWindowText(hStartButton, buf);
 	delete buf;
-	// enable Start button
+
+	// enable/disable Start button
 	LONG style = GetWindowLong(hStartButton, GWL_STYLE);
 	SetWindowLong(hStartButton, GWL_STYLE, style & (~WS_DISABLED));
+
+	// update button state
+	SetFocus(hStartButton);
 }
 
 VOID CALLBACK ProcessorCallback(WCHAR* message)
@@ -248,7 +253,12 @@ void startProcess()
 		pf->decodeSzString = &DecodeSzFromKoi8;
 		break;
 	default:
-		MessageBox(hWnd, L"Sorry, encoding is not supported yet =(", NULL, MB_OK);
+		{
+			WCHAR* szMessageText = new WCHAR[MAX_LOADSTRING];
+			LoadString(hInst, IDS_NOTSUPPORTED, szMessageText, MAX_LOADSTRING);
+			MessageBox(hWnd, szMessageText, NULL, MB_OK);
+			delete szMessageText;
+		}
 		delete pf;
 		return;
 	}
@@ -316,7 +326,7 @@ void nullTerm()
 		if(GetMenuState(hMenu, ID_ENCODING_UTF, MF_BYCOMMAND) & MF_CHECKED) {
 			WCHAR* szMessageText = new WCHAR[MAX_LOADSTRING];
 			LoadString(hInst, IDS_NOTSUPPORTED, szMessageText, MAX_LOADSTRING);
-			MessageBox(hWnd, szMessageText, L"", MB_OK);
+			MessageBox(hWnd, szMessageText, NULL, MB_OK);
 			delete szMessageText;
 		} else {
 			bNullTerm = false;

@@ -445,7 +445,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			bNullTerm = true;
 			CheckMenuItem(GetMenu(hWnd), ID_NULLTERM, MF_CHECKED | MF_BYCOMMAND);
 		case ID_ENCODING_UCS2LE:
-		case ID_ENCODING_UCS2BE:
 		case ID_ENCODING_WINDOWS:
 		case ID_ENCODING_KOI8:
 			dwEncoding = wmId;

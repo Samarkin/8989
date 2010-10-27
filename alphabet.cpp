@@ -5,8 +5,8 @@
 
 void LoadAlphabet(BYTE* charmap) {
 	HANDLE hFile = CreateFile(AlphabetFile, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, 0);
-	if(!hFile) {
-		ErrorReport(L"openning file");
+	if(hFile == INVALID_HANDLE_VALUE) {
+		ErrorReport(L"openning alphabet file");
 	}
 	char* lpBuf = new char[BUFSIZE], ch;
 	wchar_t prev;

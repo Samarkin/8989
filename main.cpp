@@ -351,7 +351,7 @@ void window_Resized(int width, int height)
 	MoveWindow(hStartButton, SIDE_SPACE, SIDE_SPACE, colWidth, FIRST_ROW, TRUE);
 	MoveWindow(hListBox, SIDE_SPACE, SIDE_SPACE*2 + FIRST_ROW, colWidth, height - stHeight - 3*SIDE_SPACE - FIRST_ROW, TRUE);
 
-	MoveWindow(hTextBox, SIDE_SPACE*3 + colWidth, SIDE_SPACE+1, (width - 4*SIDE_SPACE)/2, FIRST_ROW-2, TRUE);
+	MoveWindow(hTextBox, SIDE_SPACE*3 + colWidth, SIDE_SPACE+1, (width - 4*SIDE_SPACE)/2, height - stHeight - PROGRESS_HEIGHT - 2 - 4*SIDE_SPACE, TRUE);
 	MoveWindow(hProgressBar, SIDE_SPACE*3 + colWidth, height - stHeight - 2*SIDE_SPACE - PROGRESS_HEIGHT, colWidth, PROGRESS_HEIGHT, TRUE);
 
 	// Resize status bar
@@ -368,7 +368,7 @@ void window_Create(HWND hWnd)
 
 	// Text Box
 	hTextBox = CreateWindowEx(WS_EX_CLIENTEDGE, L"EDIT", L"",
-		WS_VISIBLE | WS_CHILD | ES_AUTOHSCROLL | ES_LEFT | ES_READONLY,
+		WS_VISIBLE | WS_CHILD | WS_HSCROLL | WS_VSCROLL | ES_AUTOHSCROLL | ES_AUTOVSCROLL | ES_LEFT | ES_READONLY | ES_MULTILINE,
 		0, 0, 0, 0, hWnd, (HMENU)IDM_TEXTBOX, hInst, NULL);
 	if(!hTextBox) ErrorReport(L"creating text box");
 

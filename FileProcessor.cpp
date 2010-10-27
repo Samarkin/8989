@@ -48,11 +48,16 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 	bool isStr[4];
 	int bytes = 0;
 	int blocks = 0;
+	bool endFile = false;
 	// block reading
-	while(ReadFile(file, buf, BLOCKSIZE, &read, 0)) {
+	while(!endFile && ReadFile(file, buf, BLOCKSIZE, &read, 0)) {
 		// update progress
 		if(pf->progressUpdated) pf->progressUpdated(blocks++);
-		if(!read) break;
+		if(!read) {
+			endFile = true;
+			read = 1;
+			buf[0] = '\0';
+		}
 
 		// block scanning
 		for(int i = 0; i < read; i++) {
@@ -82,7 +87,7 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 					if(len <= i) {
 						// just use it
 						LPSTR ptr = (CHAR*)(buf+(i-len+1));
-						LPWSTR tmp = nullTerm
+						LPWSTR tmp = nullTerm && !endFile
 							? pf->decodeSzString(ptr)
 							: pf->decodeString(ptr, len-bPrev);
 						pf->callback(tmp);
@@ -91,7 +96,7 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 					// well... uhm... here we need to re-read
 					else {
 						// seek for len characters back
-						if(SetFilePointer(file, -((int)read-i + len) + 1, NULL, FILE_CURRENT)
+						if(SetFilePointer(file, -((int)read-i + len - endFile) + 1, NULL, FILE_CURRENT)
 							== INVALID_SET_FILE_POINTER) {
 								goto __loop_end;
 						}
@@ -101,15 +106,15 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 						// read memory block
 						ReadFile(file, tmp, len, &j, NULL);
 						// decode it
-						LPWSTR wtmp = nullTerm
+						LPWSTR wtmp = nullTerm && !endFile
 							? pf->decodeSzString(tmp)
 							: pf->decodeString(tmp, len-bPrev);
 						// process decoded result and clear memory
 						pf->callback(wtmp);
 						if(tmp != (CHAR*)wtmp) delete wtmp;
 						delete tmp;
-						// return file pointer back
-						if(SetFilePointer(file, (int)read - i, NULL, FILE_CURRENT)
+						// return file pointer back only if it is not endFile
+						if(!endFile && SetFilePointer(file, (int)read - i, NULL, FILE_CURRENT)
 							== INVALID_SET_FILE_POINTER) {
 								goto __loop_end;
 						}

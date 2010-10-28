@@ -119,7 +119,7 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 						if(tmp != (CHAR*)wtmp) delete wtmp;
 						delete tmp;
 						// return file pointer back only if it is not endFile
-						if(endFile || SetFilePointer(file, (int)read - i, NULL, FILE_CURRENT)
+						if(endFile || SetFilePointer(file, (int)read - i - 1, NULL, FILE_CURRENT)
 							== INVALID_SET_FILE_POINTER) {
 								goto __loop_end;
 						}

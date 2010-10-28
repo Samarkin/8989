@@ -36,6 +36,7 @@ BEGIN
     POPUP "&Файл"
     BEGIN
         MENUITEM "&Открыть",                    IDM_OPEN
+        MENUITEM "Сохранить результат",         IDM_SAVE
         MENUITEM "В&ыход",                      IDM_EXIT
     END
     POPUP "&Настройка"
@@ -99,6 +100,7 @@ BEGIN
     POPUP "&File"
     BEGIN
         MENUITEM "&Open",                       IDM_OPEN
+        MENUITEM "Export re&sult",              IDM_SAVE
         MENUITEM "E&xit",                       IDM_EXIT
     END
     POPUP "S&ettings"

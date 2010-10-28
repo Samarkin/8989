@@ -21,6 +21,7 @@
 #define ID_ENCODING_WINDOWS             32780
 #define ID_ENCODING_KOI8                32781
 #define ID_NULLTERM                     32782
+#define IDM_SAVE                        32783
 #define IDC_STATIC                      -1
 
 // Next default values for new objects

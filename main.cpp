@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "main.h"
-#include "FileOpenDialog.h"
+#include "FileDialog.h"
 #include "FileProcessor.h"
 #include "commctrl.h"
 #include "shellapi.h"
@@ -312,6 +312,49 @@ void openFile(LPWSTR lpszFileName)
 	}
 }
 
+void saveResult(LPWSTR lpszFileName)
+{
+	if(lpszFileName == NULL) return;
+	int num;
+	// if any elements
+	if((num = SendMessage(hListBox, LB_GETCOUNT, 0, 0)) != LB_ERR && num > 0) {
+		// create file
+		HANDLE hFile = CreateFile(lpszFileName, GENERIC_WRITE, FILE_SHARE_READ, NULL, OPEN_ALWAYS, 0, 0);
+		if(hFile == INVALID_HANDLE_VALUE) {
+			ErrorReport(L"opening file", FALSE);
+			return;
+		}
+		// write
+		DWORD written;
+		WCHAR bom = 0xFEFF;
+		WCHAR newLine[2] = { 0x0D, 0x0A };
+		bool fail = false;
+		WriteFile(hFile, &bom, sizeof(bom), &written, NULL);
+		for(int i = 0; i < num; i++) {
+			SIZE_T len = SendMessage(hListBox, LB_GETTEXTLEN, i, 0);
+			WCHAR* buf = new WCHAR[len+1];
+			SendMessage(hListBox, LB_GETTEXT, i, (LPARAM)buf);
+			if (!WriteFile(hFile, buf, len*sizeof(WCHAR), &written, NULL) ||
+				!WriteFile(hFile, newLine, sizeof(newLine), &written, NULL)) {
+					delete buf;
+					fail = true;
+					goto __loop_end;
+			}
+			delete buf;
+		}
+
+__loop_end:
+		// dispose
+		if(fail) ErrorReport(L"writing file", FALSE);
+		CloseHandle(hFile);
+	}
+#ifdef _DEBUG
+	else {
+		ErrorReport(L"exporting", FALSE);
+	}
+#endif
+}
+
 void sel_Changed()
 {
 	int idx;
@@ -452,6 +495,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case IDM_OPEN:
 			// open file
 			openFile(FileOpenDialog(hWnd, ALLFILESMASK));
+			break;
+		case IDM_SAVE:
+			// save results if only no active process
+			if(!hThread) saveResult(FileSaveDialog(hWnd, TXTFILESMASK, L"txt"));
 			break;
 		case IDM_EXIT:
 			DestroyWindow(hWnd);

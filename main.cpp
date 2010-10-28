@@ -65,7 +65,9 @@ int main()
 	LoadString(hInstance, IDC_MY8989, szWindowClass, MAX_LOADSTRING);
 	if(!MyRegisterClass(hInstance))
 	{
+#ifdef DEBUG
 		ErrorReport(L"registering class");
+#endif
 	}
 
 	// Perform application initialization:
@@ -143,7 +145,9 @@ VOID InitInstance(HINSTANCE hInstance, int nCmdShow)
 		100, 100, 600, 440, NULL, NULL, hInstance, NULL);
 
 	if (!hWnd) {
+#ifdef DEBUG
 		ErrorReport(L"creating main window");
+#endif
 	}
 
 	window_Create(hWnd);
@@ -156,7 +160,9 @@ VOID InitInstance(HINSTANCE hInstance, int nCmdShow)
 	HMENU hMenu = GetMenu(hWnd);
 	dwEncoding = ID_ENCODING_UCS2LE;
 	if(!CheckMenuRadioItem(hMenu, ID_ENCODING_UTF, ID_ENCODING_KOI8, dwEncoding, MF_BYCOMMAND)) {
+#ifdef DEBUG
 		ErrorReport(L"creating menu");
+#endif
 	}
 	bNullTerm = false;
 
@@ -364,13 +370,17 @@ void window_Create(HWND hWnd)
 	hListBox = CreateWindow(L"LISTBOX", L"",
 		WS_BORDER | WS_VISIBLE | WS_CHILD | LBS_HASSTRINGS | LBS_NOTIFY | WS_VSCROLL,
 		0, 0, 0, 0, hWnd, (HMENU)IDM_LISTBOX, hInst, NULL);
+#ifdef DEBUG
 	if(!hListBox) ErrorReport(L"creating list box");
+#endif
 
 	// Text Box
 	hTextBox = CreateWindowEx(WS_EX_CLIENTEDGE, L"EDIT", L"",
 		WS_VISIBLE | WS_CHILD | WS_HSCROLL | WS_VSCROLL | ES_AUTOHSCROLL | ES_AUTOVSCROLL | ES_LEFT | ES_READONLY | ES_MULTILINE,
 		0, 0, 0, 0, hWnd, (HMENU)IDM_TEXTBOX, hInst, NULL);
+#ifdef DEBUG
 	if(!hTextBox) ErrorReport(L"creating text box");
+#endif
 
 	// Status Bar
 	INITCOMMONCONTROLSEX lpInitCtrls;
@@ -380,7 +390,9 @@ void window_Create(HWND hWnd)
 	hStatusBar = CreateWindowEx(0, STATUSCLASSNAME, NULL,
 		WS_VISIBLE | WS_CHILD | SBARS_SIZEGRIP,
 		0, 0, 0, 0, hWnd, (HMENU)IDM_STATUSBAR, hInst, NULL);
+#ifdef DEBUG
 	if(!hStatusBar) ErrorReport(L"creating status bar");
+#endif
 
 	// Progress Bar
 	hProgressBar = CreateWindowEx(0, PROGRESS_CLASS, NULL,
@@ -395,7 +407,9 @@ void window_Create(HWND hWnd)
 		(lpFileName ? 0 : WS_DISABLED),
 		0, 0, 0, 0, hWnd, (HMENU)IDM_STARTBUTTON, hInst, NULL);
 	delete buf;
+#ifdef DEBUG
 	if(!hStartButton) ErrorReport(L"creating start button");
+#endif
 }
 
 //

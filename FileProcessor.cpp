@@ -23,7 +23,11 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 
 	LARGE_INTEGER sz;
 	if(!GetFileSizeEx(file, &sz)) {
+#ifdef DEBUG
 		DWORD err = ErrorReport(L"determining size of the file", false);
+#else
+		DWORD err = GetLastError();
+#endif
 		pf->callback(NULL);
 		delete pf;
 		ExitThread(err);
@@ -140,7 +144,9 @@ __loop_end:
 	delete buf;
 	ErrorReport(L"reading file",false);
 	if(!CloseHandle(file)) {
+#ifdef DEBUG
 		ErrorReport(L"closing file", false);
+#endif
 	}
 	// 
 	pf->callback(NULL);

@@ -5,7 +5,6 @@
 #define BLOCKSIZE (1 << BLOCKBITS)
 
 DWORD WINAPI ProcessFile(LPVOID arg) {
-	// TODO: Strange Panic in utf-8
 	PPROCESSFILE pf = (PPROCESSFILE)arg;
 	if(!pf->callback || !pf->fetchChar || !pf->decodeString) {
 		delete pf;
@@ -23,7 +22,7 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 
 	LARGE_INTEGER sz;
 	if(!GetFileSizeEx(file, &sz)) {
-#ifdef DEBUG
+#ifdef _DEBUG
 		DWORD err = ErrorReport(L"determining size of the file", false);
 #else
 		DWORD err = GetLastError();
@@ -59,8 +58,10 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 		if(pf->progressUpdated) pf->progressUpdated(blocks++);
 		if(!read) {
 			endFile = true;
-			read = 1;
+			read = 3;
 			buf[0] = '\0';
+			buf[1] = '\0';
+			buf[2] = '\0';
 		}
 
 		// block scanning
@@ -100,7 +101,7 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 					// well... uhm... here we need to re-read
 					else {
 						// seek for len characters back
-						if(SetFilePointer(file, -((int)read-i + len - endFile) + 1, NULL, FILE_CURRENT)
+						if(SetFilePointer(file, -((int)read*(!endFile)-i + len) + 1, NULL, FILE_CURRENT)
 							== INVALID_SET_FILE_POINTER) {
 								goto __loop_end;
 						}
@@ -118,7 +119,7 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 						if(tmp != (CHAR*)wtmp) delete wtmp;
 						delete tmp;
 						// return file pointer back only if it is not endFile
-						if(!endFile && SetFilePointer(file, (int)read - i, NULL, FILE_CURRENT)
+						if(endFile || SetFilePointer(file, (int)read - i, NULL, FILE_CURRENT)
 							== INVALID_SET_FILE_POINTER) {
 								goto __loop_end;
 						}
@@ -144,7 +145,7 @@ __loop_end:
 	delete buf;
 	ErrorReport(L"reading file",false);
 	if(!CloseHandle(file)) {
-#ifdef DEBUG
+#ifdef _DEBUG
 		ErrorReport(L"closing file", false);
 #endif
 	}

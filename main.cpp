@@ -65,7 +65,7 @@ int main()
 	LoadString(hInstance, IDC_MY8989, szWindowClass, MAX_LOADSTRING);
 	if(!MyRegisterClass(hInstance))
 	{
-#ifdef DEBUG
+#ifdef _DEBUG
 		ErrorReport(L"registering class");
 #endif
 	}
@@ -145,7 +145,7 @@ VOID InitInstance(HINSTANCE hInstance, int nCmdShow)
 		100, 100, 600, 440, NULL, NULL, hInstance, NULL);
 
 	if (!hWnd) {
-#ifdef DEBUG
+#ifdef _DEBUG
 		ErrorReport(L"creating main window");
 #endif
 	}
@@ -160,7 +160,7 @@ VOID InitInstance(HINSTANCE hInstance, int nCmdShow)
 	HMENU hMenu = GetMenu(hWnd);
 	dwEncoding = ID_ENCODING_UCS2LE;
 	if(!CheckMenuRadioItem(hMenu, ID_ENCODING_UTF, ID_ENCODING_KOI8, dwEncoding, MF_BYCOMMAND)) {
-#ifdef DEBUG
+#ifdef _DEBUG
 		ErrorReport(L"creating menu");
 #endif
 	}
@@ -278,6 +278,7 @@ void startProcess()
 
 void openFile(LPWSTR lpszFileName)
 {
+	if(lpszFileName == NULL) return;
 	if(hThread) {
 		WCHAR* szMessageTitle = new WCHAR[MAX_LOADSTRING],
 			 * szMessageText = new WCHAR[MAX_LOADSTRING];
@@ -320,6 +321,7 @@ void sel_Changed()
 		WCHAR* buf = new WCHAR[len+1];
 		SendMessage(hListBox, LB_GETTEXT, idx, (LPARAM)buf);
 		SetWindowText(hTextBox, buf);
+		delete buf;
 	}
 }
 
@@ -370,7 +372,7 @@ void window_Create(HWND hWnd)
 	hListBox = CreateWindow(L"LISTBOX", L"",
 		WS_BORDER | WS_VISIBLE | WS_CHILD | LBS_HASSTRINGS | LBS_NOTIFY | WS_VSCROLL,
 		0, 0, 0, 0, hWnd, (HMENU)IDM_LISTBOX, hInst, NULL);
-#ifdef DEBUG
+#ifdef _DEBUG
 	if(!hListBox) ErrorReport(L"creating list box");
 #endif
 
@@ -378,7 +380,7 @@ void window_Create(HWND hWnd)
 	hTextBox = CreateWindowEx(WS_EX_CLIENTEDGE, L"EDIT", L"",
 		WS_VISIBLE | WS_CHILD | WS_HSCROLL | WS_VSCROLL | ES_AUTOHSCROLL | ES_AUTOVSCROLL | ES_LEFT | ES_READONLY | ES_MULTILINE,
 		0, 0, 0, 0, hWnd, (HMENU)IDM_TEXTBOX, hInst, NULL);
-#ifdef DEBUG
+#ifdef _DEBUG
 	if(!hTextBox) ErrorReport(L"creating text box");
 #endif
 
@@ -390,7 +392,7 @@ void window_Create(HWND hWnd)
 	hStatusBar = CreateWindowEx(0, STATUSCLASSNAME, NULL,
 		WS_VISIBLE | WS_CHILD | SBARS_SIZEGRIP,
 		0, 0, 0, 0, hWnd, (HMENU)IDM_STATUSBAR, hInst, NULL);
-#ifdef DEBUG
+#ifdef _DEBUG
 	if(!hStatusBar) ErrorReport(L"creating status bar");
 #endif
 
@@ -407,7 +409,7 @@ void window_Create(HWND hWnd)
 		(lpFileName ? 0 : WS_DISABLED),
 		0, 0, 0, 0, hWnd, (HMENU)IDM_STARTBUTTON, hInst, NULL);
 	delete buf;
-#ifdef DEBUG
+#ifdef _DEBUG
 	if(!hStartButton) ErrorReport(L"creating start button");
 #endif
 }

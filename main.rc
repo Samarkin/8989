@@ -50,6 +50,7 @@ BEGIN
         END
         MENUITEM "Оканчивающиеся &0-символом",  ID_NULLTERM
         MENUITEM "&Параметры",                  ID_PREFERENCES
+        MENUITEM "&Черный список",              ID_BLACKLIST
     END
     POPUP "&?"
     BEGIN
@@ -160,6 +161,7 @@ BEGIN
         END
         MENUITEM "&Null-Terminated",            ID_NULLTERM
         MENUITEM "&Preferences",                ID_PREFERENCES
+        MENUITEM "&Black list editor",          ID_BLACKLIST
     END
     POPUP "&Help"
     BEGIN

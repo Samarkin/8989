@@ -38,6 +38,8 @@ LPWSTR		lpFileName;							// name of openned file
 bool		bNullTerm;							// is nullterm checked
 int 		nMinLength			=		3;		// minimal length
 
+const LPWSTR BlackListFile = L"blacklist.txt";
+
 // command line arguments
 INT			argc;
 WCHAR**		argv;
@@ -543,7 +545,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			openFile(FileOpenDialog(hWnd, ALLFILESMASK));
 			break;
 		case IDM_SAVE:
-			// save results if only no active process
+			// save results only if no active process
 			if(!hThread) saveResult(FileSaveDialog(hWnd, TXTFILESMASK, L"txt"));
 			break;
 		case IDM_EXIT:
@@ -559,11 +561,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			dwEncoding = wmId;
 			CheckMenuRadioItem(GetMenu(hWnd), ID_ENCODING_UTF, ID_ENCODING_KOI8, wmId, MF_BYCOMMAND);
 			break;
+		case ID_BLACKLIST:
+			// Create black list file if it does not exist
+			CloseHandle(
+				CreateFile(BlackListFile, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, 0, NULL)
+			);
+			ShellExecute(hWnd, L"open", BlackListFile, L"", L"", SW_SHOW);
+			break;
 		case ID_NULLTERM:
 			nullTerm();
 			break;
 		case ID_PREFERENCES:
 			ChangeValue(hInst, hWnd, &nMinLength);
+			break;
+		case IDM_ABOUT:
+			MessageBox(hWnd, L"http://github.com/Samarkin/8989",L"About", MB_OK);
 			break;
 		case ID_CONEXTMENU_FILTER:
 			FilterString();

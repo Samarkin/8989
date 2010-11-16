@@ -36,7 +36,7 @@ BEGIN
     POPUP "&Файл"
     BEGIN
         MENUITEM "&Открыть",                    IDM_OPEN
-        MENUITEM "Сохранить результат",         IDM_SAVE
+        MENUITEM "&Сохранить результат",        IDM_SAVE
         MENUITEM "В&ыход",                      IDM_EXIT
     END
     POPUP "&Настройка"
@@ -49,12 +49,50 @@ BEGIN
             MENUITEM "&KOI8-R",                     ID_ENCODING_KOI8
         END
         MENUITEM "Оканчивающиеся &0-символом",  ID_NULLTERM
+        MENUITEM "&Параметры",                  ID_PREFERENCES
     END
     POPUP "&?"
     BEGIN
         MENUITEM "&О программе ...",            IDM_ABOUT
     END
 END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_PREFERENCES DIALOGEX 0, 0, 195, 48
+STYLE DS_SYSMODAL | DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Параметры"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,74,27,50,14
+    PUSHBUTTON      "Отмена",IDCANCEL,138,27,50,14
+    EDITTEXT        IDC_EDIT1,155,7,33,14,ES_AUTOHSCROLL | ES_NUMBER
+    CONTROL         "",IDC_SPIN1,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_HOTTRACK,177,7,11,14
+    LTEXT           "Минимальная длина искомой строки:",IDC_STATIC,7,8,126,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_PREFERENCES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 188
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 41
+    END
+END
+#endif    // APSTUDIO_INVOKED
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -113,6 +151,7 @@ BEGIN
             MENUITEM "&KOI8-R",                     ID_ENCODING_KOI8
         END
         MENUITEM "&Null-Terminated",            ID_NULLTERM
+        MENUITEM "&Preferences",                ID_PREFERENCES
     END
     POPUP "&Help"
     BEGIN
@@ -162,6 +201,43 @@ BEGIN
     "\0"
 END
 
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_PREFERENCES DIALOGEX 0, 0, 195, 49
+STYLE DS_SYSMODAL | DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Preferences"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,74,28,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,138,28,50,14
+    EDITTEXT        IDC_EDIT1,155,7,33,14,ES_AUTOHSCROLL | ES_NUMBER
+    CONTROL         "",IDC_SPIN1,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_HOTTRACK,177,7,11,14
+    LTEXT           "Minimal acceptable string length:",IDC_STATIC,7,8,105,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_PREFERENCES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 188
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 42
+    END
+END
 #endif    // APSTUDIO_INVOKED
 
 

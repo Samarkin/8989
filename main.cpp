@@ -9,6 +9,7 @@
 #include "shellapi.h"
 #include "encodings.h"
 #include "alphabet.h"
+#include "settingsDialog.h"
 
 #define MAX_LOADSTRING 100
 #define IDM_LISTBOX 201
@@ -35,6 +36,7 @@ HANDLE		hThread;							// child thread handle
 LPWSTR		lpFileName;							// name of openned file
 
 bool		bNullTerm;							// is nullterm checked
+int 		nMinLength			=		3;		// minimal length
 
 // command line arguments
 INT			argc;
@@ -228,7 +230,7 @@ void startProcess()
 	PROCESSFILE* pf = new PROCESSFILE;
 	FastFillMemory(pf, sizeof(PROCESSFILE), 0);
 	pf->fileName = lpFileName;
-	pf->minLength = 3;
+	pf->minLength = nMinLength;
 	pf->callback = &ProcessorCallback;
 	pf->progressUpdated = &ProcessorProgress;
 	pf->setJobSize = &ProcessorJobSize;
@@ -515,6 +517,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		case ID_NULLTERM:
 			nullTerm();
+			break;
+		case ID_PREFERENCES:
+			ChangeValue(hInst, hWnd, &nMinLength);
 			break;
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);

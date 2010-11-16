@@ -200,6 +200,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\settingsDialog.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -239,6 +243,10 @@
 			</File>
 			<File
 				RelativePath=".\main.h"
+				>
+			</File>
+			<File
+				RelativePath=".\settingsDialog.h"
 				>
 			</File>
 			<File

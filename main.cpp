@@ -10,6 +10,7 @@
 #include "encodings.h"
 #include "alphabet.h"
 #include "settingsDialog.h"
+#include "blacklist.h"
 
 #define MAX_LOADSTRING 100
 #define IDM_LISTBOX 201
@@ -37,8 +38,6 @@ LPWSTR		lpFileName;							// name of openned file
 
 bool		bNullTerm;							// is nullterm checked
 int 		nMinLength			=		3;		// minimal length
-
-const LPWSTR BlackListFile = L"blacklist.txt";
 
 // command line arguments
 INT			argc;

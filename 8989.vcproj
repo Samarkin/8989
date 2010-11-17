@@ -333,6 +333,18 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="BlackList"
+			>
+			<File
+				RelativePath=".\blackList.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\blackList.h"
+				>
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>

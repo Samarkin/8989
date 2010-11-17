@@ -523,6 +523,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
+		case IDM_ABOUT:
+			MessageBox(hWnd, L"http://github.com/Samarkin/8989",L"About", MB_OK);
+			break;
 		}
 		break;
 	case WM_SIZE:

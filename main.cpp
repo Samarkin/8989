@@ -370,6 +370,19 @@ void sel_Changed()
 	}
 }
 
+void FilterString()
+{
+	int idx = SendMessage(hListBox, LB_GETCURSEL, 0, 0);
+	SIZE_T len = SendMessage(hListBox, LB_GETTEXTLEN, idx, 0);
+	WCHAR* sFilter = new WCHAR[len+1];
+	SendMessage(hListBox, LB_GETTEXT, idx, (LPARAM)sFilter);
+	int i;
+	while((i = SendMessage(hListBox, LB_FINDSTRINGEXACT, -1, (LPARAM)sFilter)) != LB_ERR) {
+		SendMessage(hListBox, LB_DELETESTRING, i, 0);
+	}
+	delete sFilter;
+}
+
 void nullTerm()
 {
 	HMENU hMenu = GetMenu(hWnd);
@@ -481,6 +494,37 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		DragQueryFile(hDrop, 0, lpszFile, MAX_PATH);
 		openFile(lpszFile);
 		} break;
+	case WM_CONTEXTMENU:
+		if((HWND)wParam == hListBox) {
+			// check if smth selected
+			DWORD sel = SendMessage(hListBox, LB_GETCURSEL, 0, 0);
+			if(sel == LB_ERR)
+				break;
+			// load and show menu
+			HMENU hMenu1 = LoadMenu(hInst, MAKEINTRESOURCE(IDR_CONTEXT));
+			HMENU hMenu2 = GetSubMenu(hMenu1, 0);
+			SetForegroundWindow(hWnd);
+			// get cursor position
+			int xPos = LOWORD(lParam);
+			int yPos = HIWORD(lParam);
+			// if keyboard-initiated
+			if(lParam == -1) {
+				RECT rect;
+				POINT p;
+				SendMessage(hListBox, LB_GETITEMRECT, sel, (LPARAM)&rect);
+				p.x = rect.left;
+				p.y = rect.bottom;
+				ClientToScreen(hListBox, &p);
+				xPos = p.x;
+				yPos = p.y;
+			}
+			// show
+			TrackPopupMenu(hMenu2, TPM_TOPALIGN | TPM_LEFTALIGN, xPos, yPos, 0, hWnd, NULL);
+			// clean up
+			DestroyMenu(hMenu2);
+			DestroyMenu(hMenu1);
+		}
+		break;
 	case WM_COMMAND:
 		wmId    = LOWORD(wParam);
 		wmEvent = HIWORD(wParam);
@@ -521,11 +565,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case ID_PREFERENCES:
 			ChangeValue(hInst, hWnd, &nMinLength);
 			break;
-		default:
-			return DefWindowProc(hWnd, message, wParam, lParam);
+		case ID_CONEXTMENU_FILTER:
+			FilterString();
+			break;
 		case IDM_ABOUT:
 			MessageBox(hWnd, L"http://github.com/Samarkin/8989",L"About", MB_OK);
 			break;
+		default:
+			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
 		break;
 	case WM_SIZE:

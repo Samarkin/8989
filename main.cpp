@@ -192,10 +192,17 @@ void SetStartButtonState(bool start)
 	SetFocus(hStartButton);
 }
 
+VOID CALLBACK SendToList(WCHAR* message)
+{
+	if(!InBlackList(message))
+		SendMessage(hListBox, LB_ADDSTRING, (WPARAM)-1, (LPARAM)message);
+}
+
 VOID CALLBACK ProcessorCallback(WCHAR* message)
 {
 	if(message) {
-		SendMessage(hListBox, LB_ADDSTRING, (WPARAM)-1, (LPARAM)message);
+		//CreateThread(NULL, 0, &SendToList, (LPVOID)message, 0, NULL);
+		SendToList(message);
 	} else {
 		SetWindowText(hStatusBar, L"Child thread finished");
 		// enable start button
@@ -238,6 +245,7 @@ void startProcess()
 	pf->nullTerminated = bNullTerm;
 
 	LoadAlphabet(pf->charmap);
+	LoadBlackList();
 
 	// Encodings
 	switch(dwEncoding) {
@@ -561,10 +569,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			CheckMenuRadioItem(GetMenu(hWnd), ID_ENCODING_UTF, ID_ENCODING_KOI8, wmId, MF_BYCOMMAND);
 			break;
 		case ID_BLACKLIST:
-			// Create black list file if it does not exist
-			CloseHandle(
-				CreateFile(BlackListFile, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, 0, NULL)
-			);
+			{
+				// Create black list file if it does not exist
+				HANDLE hFile = CreateFile(BlackListFile, GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, 0, NULL);			
+				char buf[2];
+				buf[0] = 0xFF;
+				buf[1] = 0xFE;
+				DWORD written;
+				WriteFile(hFile, buf, 2, &written, NULL);
+				CloseHandle(hFile);
+			}
 			ShellExecute(hWnd, L"open", BlackListFile, L"", L"", SW_SHOW);
 			break;
 		case ID_NULLTERM:

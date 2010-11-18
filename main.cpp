@@ -579,9 +579,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case ID_CONEXTMENU_FILTER:
 			FilterString();
 			break;
-		case IDM_ABOUT:
-			MessageBox(hWnd, L"http://github.com/Samarkin/8989",L"About", MB_OK);
-			break;
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		}

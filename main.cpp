@@ -580,6 +580,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case IDM_LISTBOX:
 			if(wmEvent == LBN_SELCHANGE)
 				sel_Changed();
+			else
+				return DefWindowProc(hWnd, message, wParam, lParam);
 			break;
 		case IDM_STARTBUTTON:
 			startProcess();
@@ -625,7 +627,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			ChangeValue(hInst, hWnd, &nMinLength);
 			break;
 		case IDM_ABOUT:
-			MessageBox(hWnd, L"Source code available at http://github.com/Samarkin/8989",L"About", MB_OK);
+			MessageBox(hWnd, L"Source code available at http://github.com/Samarkin/8989", L"About", MB_OK);
 			break;
 		case ID_CONEXTMENU_FILTER:
 			FilterString();

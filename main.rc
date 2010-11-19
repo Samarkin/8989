@@ -63,6 +63,7 @@ BEGIN
     POPUP "Conext Menu"
     BEGIN
         MENUITEM "Убрать &эту строку",          ID_CONEXTMENU_FILTER
+        MENUITEM "Добавить в &черный список",   ID_CONEXTMENU_BLACKLIST
     END
 END
 
@@ -174,6 +175,7 @@ BEGIN
     POPUP "Conext Menu"
     BEGIN
         MENUITEM "&Remove this string",         ID_CONEXTMENU_FILTER
+        MENUITEM "Add to &black list",          ID_CONEXTMENU_BLACKLIST
     END
 END
 

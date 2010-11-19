@@ -392,6 +392,43 @@ void FilterString()
 	delete sFilter;
 }
 
+void BlackListString()
+{
+	int idx = SendMessage(hListBox, LB_GETCURSEL, 0, 0);
+	SIZE_T len = SendMessage(hListBox, LB_GETTEXTLEN, idx, 0);
+	WCHAR* sFilter = new WCHAR[len+1];
+	SendMessage(hListBox, LB_GETTEXT, idx, (LPARAM)sFilter);
+
+	// Add to black list
+	HANDLE hFile = CreateFile(BlackListFile, FILE_APPEND_DATA, FILE_SHARE_READ, NULL, OPEN_ALWAYS, 0, NULL);
+	DWORD written;
+	// if new file
+	LARGE_INTEGER sz;
+	if(GetFileSizeEx(hFile, &sz) && sz.QuadPart == 0) {
+		// Write Byte-Order mark
+		unsigned char bom[2];
+		bom[0] = 0xFF;
+		bom[1] = 0xFE;
+		WriteFile(hFile, bom, sizeof(bom), &written, NULL);
+	}
+	else {
+		// Write newline
+		WCHAR newLine[2];
+		newLine[0] = L'\r';
+		newLine[1] = L'\n';
+		WriteFile(hFile, newLine, sizeof(newLine), &written, NULL);
+	}
+	WriteFile(hFile, sFilter, len*sizeof(WCHAR), &written, NULL);
+	CloseHandle(hFile);
+
+	// Delete from list of results
+	int i;
+	while((i = SendMessage(hListBox, LB_FINDSTRINGEXACT, -1, (LPARAM)sFilter)) != LB_ERR) {
+		SendMessage(hListBox, LB_DELETESTRING, i, 0);
+	}
+	delete sFilter;
+}
+
 void nullTerm()
 {
 	HMENU hMenu = GetMenu(hWnd);
@@ -571,12 +608,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case ID_BLACKLIST:
 			{
 				// Create black list file if it does not exist
-				HANDLE hFile = CreateFile(BlackListFile, GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, 0, NULL);			
-				char buf[2];
-				buf[0] = 0xFF;
-				buf[1] = 0xFE;
+				HANDLE hFile = CreateFile(BlackListFile, GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, 0, NULL);
+				unsigned char bom[2];
+				bom[0] = 0xFF;
+				bom[1] = 0xFE;
 				DWORD written;
-				WriteFile(hFile, buf, 2, &written, NULL);
+				WriteFile(hFile, bom, sizeof(bom), &written, NULL);
 				CloseHandle(hFile);
 			}
 			ShellExecute(hWnd, L"open", BlackListFile, L"", L"", SW_SHOW);
@@ -588,10 +625,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			ChangeValue(hInst, hWnd, &nMinLength);
 			break;
 		case IDM_ABOUT:
-			MessageBox(hWnd, L"http://github.com/Samarkin/8989",L"About", MB_OK);
+			MessageBox(hWnd, L"Source code available at http://github.com/Samarkin/8989",L"About", MB_OK);
 			break;
 		case ID_CONEXTMENU_FILTER:
 			FilterString();
+			break;
+		case ID_CONEXTMENU_BLACKLIST:
+			BlackListString();
 			break;
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);

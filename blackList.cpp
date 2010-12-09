@@ -33,5 +33,5 @@ WCHAR* LoadBlackList() {
 }
 
 bool InBlackList(WCHAR* message) {
-	return wBlackList && StrStr(wBlackList, message) != NULL;
+	return wBlackList && wBlackList[3] != '\0' && StrStr(wBlackList, message) != NULL;
 }

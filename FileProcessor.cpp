@@ -1,8 +1,9 @@
 #include "stdafx.h"
 #include "FileProcessor.h"
 
-#define BLOCKBITS 12
+#define BLOCKBITS 19
 #define BLOCKSIZE (1 << BLOCKBITS)
+#define MAXSTRINGLEN 32761
 
 DWORD WINAPI ProcessFile(LPVOID arg) {
 	PPROCESSFILE pf = (PPROCESSFILE)arg;
@@ -85,21 +86,34 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 			bool nullTerm = wch == L'\0';
 			if(isStr[3-bPrev] && (nullTerm || (!pf->nullTerminated && !isStr[3])))
 			{
-				len += bPrev;
 				// if string has no letter or too short - fuck it
 				if(contLetters && effLen >= pf->minLength) {
 					// the simpliest variant - if entire string is already in memory
 					if(len <= i) {
+						len += bPrev;
 						// just use it
 						LPSTR ptr = (CHAR*)(buf+(i-len+1));
 						LPWSTR tmp = nullTerm && !endFile
 							? pf->decodeSzString(ptr)
 							: pf->decodeString(ptr, len-bPrev);
-						pf->callback(tmp);
+						LPWSTR _tmp = tmp;
+						while(len > MAXSTRINGLEN) {
+							// get only first MAXSTRINGLEN chars
+							WCHAR* g = (_tmp + MAXSTRINGLEN);
+							WCHAR tq = *g;
+							*g = L'\0';
+							pf->callback(_tmp);
+							*g = tq;
+							// move _tmp for MAXSTRINGLEN chars forward
+							_tmp = g;
+							len -= MAXSTRINGLEN;
+						}
+						pf->callback(_tmp);
 						if(ptr != (CHAR*)tmp) delete tmp;
 					}
 					// well... uhm... here we need to re-read
 					else {
+						len += bPrev;
 						// seek for len characters back
 						if(SetFilePointer(file, -((int)read*(!endFile)-i + len) + 1, NULL, FILE_CURRENT)
 							== INVALID_SET_FILE_POINTER) {
@@ -115,7 +129,19 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 							? pf->decodeSzString(tmp)
 							: pf->decodeString(tmp, len-bPrev);
 						// process decoded result and clear memory
-						pf->callback(wtmp);
+						LPWSTR _tmp = wtmp;
+						while(len > MAXSTRINGLEN) {
+							// get only first MAXSTRINGLEN chars
+							WCHAR* g = (_tmp + MAXSTRINGLEN);
+							WCHAR tq = *g;
+							*g = L'\0';
+							pf->callback(_tmp);
+							*g = tq;
+							// move _tmp for MAXSTRINGLEN chars forward
+							_tmp = g;
+							len -= MAXSTRINGLEN;
+						}
+						pf->callback(_tmp);
 						if(tmp != (CHAR*)wtmp) delete wtmp;
 						delete tmp;
 						// return file pointer back only if it is not endFile

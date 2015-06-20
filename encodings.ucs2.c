@@ -1,11 +1,11 @@
 #include "stdafx.h"
 #include "encodings.h"
 
-INT FetchUcs2LEChar(CHAR* buf, WCHAR& ch, int bytes)
+INT FetchUcs2LEChar(CHAR* buf, WCHAR* ch, int bytes)
 {
 	if(bytes >= 2)
 	{
-		ch = *(WCHAR*)(buf + BUFLEN - 2);
+		*ch = *(WCHAR*)(buf + BUFLEN - 2);
 		return 2;
 	}
 	else
@@ -25,7 +25,7 @@ LPWSTR DecodeFromUcs2LE(LPSTR lpStr, int len)
 {
 	// num of widechars + null-symbol
 	int wlen = len/2 + 1;
-	WCHAR* t = new WCHAR[wlen];
+	WCHAR* t = malloc(sizeof(WCHAR)*wlen);
 	for(int i = 0; i < wlen-1; i++) {
 		t[i] = *(((WCHAR*)lpStr) + i);
 	}

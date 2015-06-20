@@ -4,7 +4,7 @@
 LPWSTR FileOpenDialog(HWND hWnd, LPCWSTR FMask) {
 	// preparing
 	OPENFILENAME ofn;
-	WCHAR* szFile = new WCHAR[MAX_PATH];
+	WCHAR* szFile = malloc(sizeof(WCHAR)*MAX_PATH);
 	szFile[0] = '\0';
 	FastZeroMemory(&ofn, sizeof(OPENFILENAME));
 	ofn.lStructSize = sizeof(OPENFILENAME);
@@ -30,7 +30,7 @@ LPWSTR FileOpenDialog(HWND hWnd, LPCWSTR FMask) {
 LPWSTR FileSaveDialog(HWND hWnd, LPCWSTR FMask, LPCWSTR defExt) {
 	// preparing
 	OPENFILENAME ofn;
-	WCHAR* szFile = new WCHAR[MAX_PATH];
+	WCHAR* szFile = malloc(sizeof(WCHAR)*MAX_PATH);
 	szFile[0] = '\0';
 	FastZeroMemory(&ofn, sizeof(OPENFILENAME));
 	ofn.lpstrDefExt = defExt;

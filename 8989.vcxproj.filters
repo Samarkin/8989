@@ -1,0 +1,126 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="FileProcessor">
+      <UniqueIdentifier>{f38cb581-1bc7-4ee9-b514-71794f731e06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Encodings">
+      <UniqueIdentifier>{fceeb980-6b7c-4f54-a89a-29de5de053f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Alphabet">
+      <UniqueIdentifier>{b73c3a0e-f984-49dd-a3f3-aaa6726c4368}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BlackList">
+      <UniqueIdentifier>{b71d4140-2d8a-41e7-874c-be570697aaf3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="alphabet.c">
+      <Filter>Alphabet</Filter>
+    </ClCompile>
+    <ClCompile Include="blackList.c">
+      <Filter>BlackList</Filter>
+    </ClCompile>
+    <ClCompile Include="encodings.koi8.c">
+      <Filter>Encodings</Filter>
+    </ClCompile>
+    <ClCompile Include="encodings.ucs2.c">
+      <Filter>Encodings</Filter>
+    </ClCompile>
+    <ClCompile Include="encodings.utf8.c">
+      <Filter>Encodings</Filter>
+    </ClCompile>
+    <ClCompile Include="encodings.win1251.c">
+      <Filter>Encodings</Filter>
+    </ClCompile>
+    <ClCompile Include="FileProcessor.c">
+      <Filter>FileProcessor</Filter>
+    </ClCompile>
+    <ClCompile Include="common.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FastMemoryOperations.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FileDialog.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsDialog.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FastMemoryOperations.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FileDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="settingsDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FileProcessor.h">
+      <Filter>FileProcessor</Filter>
+    </ClInclude>
+    <ClInclude Include="encodings.h">
+      <Filter>Encodings</Filter>
+    </ClInclude>
+    <ClInclude Include="encodings.interface.h">
+      <Filter>Encodings</Filter>
+    </ClInclude>
+    <ClInclude Include="alphabet.h">
+      <Filter>Alphabet</Filter>
+    </ClInclude>
+    <ClInclude Include="blackList.h">
+      <Filter>BlackList</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="main.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="alphabet.cfg">
+      <Filter>Alphabet</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="alphabet.readme.txt">
+      <Filter>Alphabet</Filter>
+    </Text>
+  </ItemGroup>
+</Project>

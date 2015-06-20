@@ -3,7 +3,10 @@
 [Bb]in/
 [Oo]bj/
 _ReSharper.*/
+ipch/
 *.ncb
 *.aps
 *.suo
 *.user
+*.sdf
+*.opensdf

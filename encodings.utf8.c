@@ -5,7 +5,7 @@
 //   buf - sequence
 //   ch - resulting symbol (!)
 //   bytes - maximum ammount of available bytes
-BOOL FetchUtf8Char(CHAR* buf, WCHAR& ch, int bytes) {
+BOOL FetchUtf8Char(CHAR* buf, WCHAR* ch, int bytes) {
 	if(bytes == 0) return FALSE;
 	if(buf[BUFLEN-1] & 0x80) { // 1xxxxxxx
 		if(buf[BUFLEN-1] & 0x40) { // 11xxxxxx
@@ -23,7 +23,7 @@ BOOL FetchUtf8Char(CHAR* buf, WCHAR& ch, int bytes) {
 					}
 					else { // 110xxxxx 10xxxxxx
 						// canonical two-byte utf-8 char
-						ch = (buf[BUFLEN-1] & 0x3f) // last six bits of last byte
+						*ch = (buf[BUFLEN-1] & 0x3f) // last six bits of last byte
 						 + ((buf[BUFLEN-2] & 0x1f) << 6); // last five bits of first byte
 						return 2;
 					}
@@ -37,7 +37,7 @@ BOOL FetchUtf8Char(CHAR* buf, WCHAR& ch, int bytes) {
 								return FALSE;
 							}
 							else { // 110xxxxx 10xxxxxx 10xxxxxx
-								ch = (buf[BUFLEN-1] & 0x3f)			// last six bits of last octet
+								*ch = (buf[BUFLEN-1] & 0x3f)			// last six bits of last octet
 								 + ((int)(buf[BUFLEN-2] & 0x3f) << 6)	// last six bits of pre-last octet
 								 + ((int)(buf[BUFLEN-3] & 0xf) << 12);	// last four bits of first octet
 								return 3;
@@ -62,7 +62,7 @@ BOOL FetchUtf8Char(CHAR* buf, WCHAR& ch, int bytes) {
 	}
 	else { // 0xxxxxxx
 		// one byte character
-		ch = (WCHAR)buf[BUFLEN-1];
+		*ch = (WCHAR)buf[BUFLEN-1];
 		return 1;
 	}
 }
@@ -77,11 +77,11 @@ LPWSTR DecodeSzFromUtf8(LPSTR lpStr) {
 				len++;
 		}
 	}
-	WCHAR* buf = new WCHAR[len+1], *buf1 = buf;
+	WCHAR* buf = malloc(sizeof(WCHAR)*(len+1)), *buf1 = buf;
 	int bytes = 0;
 	for(char* lpc = lpStr; *lpc; lpc++) {
 		if(bytes < 3) ++bytes;
-		if(FetchUtf8Char(lpc-BUFLEN+1, *buf1, bytes)) {
+		if(FetchUtf8Char(lpc-BUFLEN+1, buf1, bytes)) {
 			buf1++;
 		}
 	}
@@ -99,11 +99,11 @@ LPWSTR DecodeFromUtf8(LPSTR lpStr, int size) {
 				len++;
 		}
 	}
-	WCHAR* buf = new WCHAR[len+1], *buf1 = buf;
+	WCHAR* buf = malloc(sizeof(WCHAR)*(len+1)), *buf1 = buf;
 	int bytes = 0;
 	for(int i = 0; i < size; i++) {
 		if(bytes < 3) ++bytes;
-		if(FetchUtf8Char((lpStr+i)-BUFLEN+1, *buf1, bytes)) {
+		if(FetchUtf8Char((lpStr+i)-BUFLEN+1, buf1, bytes)) {
 			buf1++;
 		}
 	}

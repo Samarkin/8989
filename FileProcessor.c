@@ -8,15 +8,15 @@
 DWORD WINAPI ProcessFile(LPVOID arg) {
 	PPROCESSFILE pf = (PPROCESSFILE)arg;
 	if(!pf->callback || !pf->fetchChar || !pf->decodeString) {
-		delete pf;
+		free(pf);
 		ExitThread(-1);
 		return -1;
 	}
 	HANDLE file = CreateFile(pf->fileName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, 0);
 	if(file == INVALID_HANDLE_VALUE) {
-		DWORD err = ErrorReport(L"openning file", false);
+		DWORD err = ErrorReport(L"openning file");
 		pf->callback(NULL);
-		delete pf;
+		free(pf);
 		ExitThread(err);
 		return err;
 	}
@@ -24,12 +24,12 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 	LARGE_INTEGER sz;
 	if(!GetFileSizeEx(file, &sz)) {
 #ifdef _DEBUG
-		DWORD err = ErrorReport(L"determining size of the file", false);
+		DWORD err = ErrorReport(L"determining size of the file");
 #else
 		DWORD err = GetLastError();
 #endif
 		pf->callback(NULL);
-		delete pf;
+		free(pf);
 		ExitThread(err);
 		return err;
 	}
@@ -38,27 +38,27 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 	if(sz.HighPart >> BLOCKBITS) {
 		MessageBox(0, L"File is too big!", NULL, MB_OK);
 		pf->callback(NULL);
-		delete pf;
+		free(pf);
 		ExitThread(-1);
 		return -1;
 	}
 	if(pf->setJobSize) pf->setJobSize(sz32);
-	CHAR* buf = new CHAR[BLOCKSIZE];
+	CHAR* buf = malloc(BLOCKSIZE);
 	DWORD read = 0;
-	long len = 0;
+	DWORD len = 0;
 	long effLen = 0;
-	bool isLetter, contLetters = false;
+	BOOL isLetter, contLetters = FALSE;
 	char prev[3];
-	bool isStr[4];
+	BOOL isStr[4];
 	int bytes = 0;
 	int blocks = 0;
-	bool endFile = false;
+	BOOL endFile = FALSE;
 	// block reading
 	while(!endFile && ReadFile(file, buf, BLOCKSIZE, &read, 0)) {
 		// update progress
 		if(pf->progressUpdated) pf->progressUpdated(blocks++);
 		if(!read) {
-			endFile = true;
+			endFile = TRUE;
 			read = 3;
 			buf[0] = '\0';
 			buf[1] = '\0';
@@ -66,7 +66,7 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 		}
 
 		// block scanning
-		for(int i = 0; i < read; i++) {
+		for(unsigned int i = 0; i < read; i++) {
 			if(bytes < 3) ++bytes;
 			char ch = buf[i];
 			// move prev
@@ -75,7 +75,7 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 			prev[2] = ch;
 			// fetch char
 			WCHAR wch;
-			int bPrev = pf->fetchChar(prev, wch, bytes);
+			int bPrev = pf->fetchChar(prev, &wch, bytes);
 			isLetter = bPrev && pf->charmap[wch] == ISLETTER;
 			// still moving prev
 			isStr[0] = isStr[1];
@@ -83,7 +83,7 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 			isStr[2] = isStr[3];
 			isStr[3] = bPrev && pf->charmap[wch];
 			if(!bPrev) bPrev = 1;
-			bool nullTerm = wch == L'\0';
+			BOOL nullTerm = wch == L'\0';
 			if(isStr[3-bPrev] && (nullTerm || (!pf->nullTerminated && !isStr[3])))
 			{
 				// if string has no letter or too short - fuck it
@@ -109,18 +109,18 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 							len -= MAXSTRINGLEN;
 						}
 						pf->callback(_tmp);
-						if(ptr != (CHAR*)tmp) delete tmp;
+						if(ptr != (CHAR*)tmp) free(tmp);
 					}
 					// well... uhm... here we need to re-read
 					else {
 						len += bPrev;
 						// seek for len characters back
-						if(SetFilePointer(file, -((int)read*(!endFile)-i + len) + 1, NULL, FILE_CURRENT)
+						if(SetFilePointer(file, -((int)read*(!endFile)-(int)i + (int)len) + 1, NULL, FILE_CURRENT)
 							== INVALID_SET_FILE_POINTER) {
 								goto __loop_end;
 						}
 						// allocate memory
-						CHAR* tmp = new CHAR[len];
+						CHAR* tmp = malloc(len);
 						DWORD j;
 						// read memory block
 						ReadFile(file, tmp, len, &j, NULL);
@@ -142,8 +142,8 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 							len -= MAXSTRINGLEN;
 						}
 						pf->callback(_tmp);
-						if(tmp != (CHAR*)wtmp) delete wtmp;
-						delete tmp;
+						if(tmp != (CHAR*)wtmp) free(wtmp);
+						free(tmp);
 						// return file pointer back only if it is not endFile
 						if(endFile || SetFilePointer(file, (int)read - i - 1, NULL, FILE_CURRENT)
 							== INVALID_SET_FILE_POINTER) {
@@ -168,17 +168,17 @@ DWORD WINAPI ProcessFile(LPVOID arg) {
 	}
 
 __loop_end:
-	delete buf;
-	ErrorReport(L"reading file",false);
+	free(buf);
+	ErrorReport(L"reading file");
 	if(!CloseHandle(file)) {
 #ifdef _DEBUG
-		ErrorReport(L"closing file", false);
+		ErrorReport(L"closing file");
 #endif
 	}
 	// 
 	pf->callback(NULL);
 	//delete pf->fileName;
-	delete pf;
+	free(pf);
 	ExitThread(0);
 	return 0;
 }

@@ -6,7 +6,7 @@ WCHAR* wBlackList = NULL;
 
 WCHAR* LoadBlackList() {
 	if(wBlackList)
-		delete wBlackList;
+		free(wBlackList);
 	HANDLE hFile = CreateFile(BlackListFile, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, 0);
 	if(hFile == INVALID_HANDLE_VALUE) {
 		return NULL;
@@ -23,7 +23,7 @@ WCHAR* LoadBlackList() {
 		CloseHandle(hFile);
 		return wBlackList = NULL;
 	}
-	char* bList = new char[sz.LowPart+2];
+	char* bList = malloc(sz.LowPart+2);
 	DWORD read;
 	ReadFile(hFile, bList, sz.LowPart, &read, NULL);
 	WCHAR* wList = (LPWSTR)bList;
@@ -32,6 +32,6 @@ WCHAR* LoadBlackList() {
 	return wBlackList = wList;
 }
 
-bool InBlackList(WCHAR* message) {
+BOOL InBlackList(WCHAR* message) {
 	return wBlackList && wBlackList[3] != '\0' && StrStr(wBlackList, message) != NULL;
 }

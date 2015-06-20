@@ -1,4 +1,4 @@
-const LPWSTR BlackListFile = L"blacklist.txt";
+#define BlackListFile L"blacklist.txt"
 
 WCHAR* LoadBlackList();
-bool InBlackList(WCHAR*);
+BOOL InBlackList(WCHAR*);

@@ -1,11 +1,11 @@
 #pragma once
 
-const int BUFLEN = 3;
+#define BUFLEN 3
 
-INT FetchWin1251Char(CHAR*, WCHAR&, int);
-INT FetchUtf8Char(CHAR*, WCHAR&, int);
-INT FetchKoi8Char(CHAR*, WCHAR&, int);
-INT FetchUcs2LEChar(CHAR*, WCHAR&, int);
+INT FetchWin1251Char(CHAR*, WCHAR*, int);
+INT FetchUtf8Char(CHAR*, WCHAR*, int);
+INT FetchKoi8Char(CHAR*, WCHAR*, int);
+INT FetchUcs2LEChar(CHAR*, WCHAR*, int);
 
 LPWSTR DecodeFromWin1251(LPSTR, int);
 LPWSTR DecodeFromUtf8(LPSTR, int);

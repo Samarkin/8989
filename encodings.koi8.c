@@ -8,10 +8,10 @@ WCHAR koi8[128] = {0x2500, 0x2502, 0x250C, 0x2510, 0x2514, 0x2518, 0x251C, 0x252
 //   buf - sequence
 //   ch - resulting symbol (!)
 //   bytes - maximum ammount of available bytes
-BOOL FetchKoi8Char(CHAR* buf, WCHAR& wch, int bytes) {
+BOOL FetchKoi8Char(CHAR* buf, WCHAR* wch, int bytes) {
 	if(bytes == 0)
 		return FALSE;
-	wch = EasyFetchKoi8(buf[BUFLEN-1]);
+	*wch = EasyFetchKoi8(buf[BUFLEN-1]);
 	return TRUE;
 }
 
@@ -34,7 +34,7 @@ LPWSTR DecodeSzFromKoi8(LPSTR lpStr) {
 
 // Decodes not null-terminated Koi-8 string
 LPWSTR DecodeFromKoi8(LPSTR lpStr, int len) {
-	WCHAR* ans = new WCHAR[len+1];
+	WCHAR* ans = malloc(sizeof(WCHAR)*(len+1));
 	for(int i = 0; i < len; i++) {
 		ans[i] = EasyFetchKoi8(lpStr[i]);
 	}

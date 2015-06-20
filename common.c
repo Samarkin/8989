@@ -1,6 +1,16 @@
 #include "stdafx.h"
 
-DWORD ErrorReport(LPWSTR lpszWhere, BOOL isFatal) {
+DWORD ErrorReportInternal(LPWSTR lpszWhere, BOOL isFatal);
+
+DWORD FatalError(LPWSTR lpszWhere) {
+	return ErrorReportInternal(lpszWhere, TRUE);
+}
+
+DWORD ErrorReport(LPWSTR lpszWhere) {
+	return ErrorReportInternal(lpszWhere, FALSE);
+}
+
+DWORD ErrorReportInternal(LPWSTR lpszWhere, BOOL isFatal) {
 	// Retrieve the system error message for the last-error code
 	WCHAR* lpMsgBuf;
 	WCHAR* lpDisplayBuf;
@@ -45,13 +55,6 @@ DWORD ErrorReport(LPWSTR lpszWhere, BOOL isFatal) {
 	return dw;
 }
 
-LPVOID HeapAlloc(SIZE_T size) {
-	return HeapAlloc(GetProcessHeap(), 0, size);
-}
-
-BOOL HeapDeAlloc(LPVOID ptr) {
-	return HeapFree(GetProcessHeap(), 0, ptr);
-}
 /*
 BOOL HeapTruncate(LPVOID ptr, SIZE_T size) {
 	LPVOID smth = HeapReAlloc(GetProcessHeap(), 0, ptr, size);
@@ -61,7 +64,7 @@ BOOL HeapTruncate(LPVOID ptr, SIZE_T size) {
 	return TRUE;
 }
 */
-
+/*
 unsigned int widelen(const wchar_t *Str) {
 	__asm {
 		mov esi, Str
@@ -80,33 +83,33 @@ wcslen_m1:
 		// eax now holds the answer
 	}
 }
-
+*/
 wchar_t* widecat(wchar_t* s1, const wchar_t* s2) {
 	wchar_t* s = s1;
 	while(*s) ++s;
 	do { *(s++) = *s2; } while(*(s2++));
 	return s1;
 }
-
+/*
 void* memset(void* ptr, char value, size_t num) {
 	FastFillMemory(ptr, num, value);
 	return ptr;
 }
-
-void*__cdecl operator new(size_t size) {
-	return HeapAlloc(size);
+*/
+void*__cdecl malloc(size_t size) {
+	return HeapAlloc(GetProcessHeap(), 0, size);
 }
 
-void __cdecl operator delete(void* ptr) {
-	HeapDeAlloc(ptr);
+void __cdecl free(void* ptr) {
+	HeapFree(GetProcessHeap(), 0, ptr);
 }
 
 // itow - converts number to wide-string
 LPWSTR itow(long a) {
 	// prepare
 	const static SIZE_T BUF_SIZE = 11;
-	LPWSTR buf = (LPWSTR)HeapAlloc(BUF_SIZE);
-	int len = 0;
+	LPWSTR buf = malloc(BUF_SIZE);
+	size_t len = 0;
 
 	// build
 	do {

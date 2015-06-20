@@ -14,7 +14,7 @@ typedef struct tagPROCESSFILE
 {
 	LPWSTR fileName;
 	int minLength;
-	bool nullTerminated;
+	BOOL nullTerminated;
 	RESULTCALLBACK callback;
 	PROGRESSCALLBACK progressUpdated;
 	PROGRESSCALLBACK setJobSize;

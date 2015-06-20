@@ -8,10 +8,10 @@ WCHAR win1251[64] = {0x402, 0x403, 0x201A, 0x453, 0x201E, 0x2026, 0x2020, 0x2021
 //   buf - sequence
 //   ch - resulting symbol (!)
 //   bytes - maximum ammount of available bytes
-BOOL FetchWin1251Char(CHAR* buf, WCHAR& wch, int bytes) {
+BOOL FetchWin1251Char(CHAR* buf, WCHAR* wch, int bytes) {
 	if(bytes == 0)
 		return FALSE;
-	wch = EasyFetchWin1251(buf[BUFLEN-1]);
+	*wch = EasyFetchWin1251(buf[BUFLEN-1]);
 	return TRUE;
 }
 
@@ -37,7 +37,7 @@ LPWSTR DecodeSzFromWin1251(LPSTR lpStr) {
 
 // Decodes not null-terminated Windows-1251 string
 LPWSTR DecodeFromWin1251(LPSTR lpStr, int len) {
-	WCHAR* ans = new WCHAR[len+1];
+	WCHAR* ans = malloc(sizeof(WCHAR)*(len+1));
 	for(int i = 0; i < len; i++) {
 		ans[i] = EasyFetchWin1251(lpStr[i]);
 	}

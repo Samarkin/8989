@@ -1,4 +1,4 @@
-// stdafx.cpp : source file that includes just the standard includes
+// stdafx.c : source file that includes just the standard includes
 // 8989.pch will be the pre-compiled header
 // stdafx.obj will contain the pre-compiled type information
 

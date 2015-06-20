@@ -36,7 +36,7 @@ DWORD		dwEncoding;							// selected encoding
 HANDLE		hThread;							// child thread handle
 LPWSTR		lpFileName;							// name of openned file
 
-bool		bNullTerm;							// is nullterm checked
+BOOL		bNullTerm;							// is nullterm checked
 int 		nMinLength			=		3;		// minimal length
 
 // command line arguments
@@ -69,7 +69,7 @@ int main()
 	if(!MyRegisterClass(hInstance))
 	{
 #ifdef _DEBUG
-		ErrorReport(L"registering class");
+		FatalError(L"registering class");
 #endif
 	}
 
@@ -149,7 +149,7 @@ VOID InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 	if (!hWnd) {
 #ifdef _DEBUG
-		ErrorReport(L"creating main window");
+		FatalError(L"creating main window");
 #endif
 	}
 
@@ -164,25 +164,25 @@ VOID InitInstance(HINSTANCE hInstance, int nCmdShow)
 	dwEncoding = ID_ENCODING_UCS2LE;
 	if(!CheckMenuRadioItem(hMenu, ID_ENCODING_UTF, ID_ENCODING_KOI8, dwEncoding, MF_BYCOMMAND)) {
 #ifdef _DEBUG
-		ErrorReport(L"creating menu");
+		FatalError(L"creating menu");
 #endif
 	}
-	bNullTerm = false;
+	bNullTerm = FALSE;
 
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
 }
 
-void SetStartButtonState(bool start)
+void SetStartButtonState(BOOL start)
 {
 	// change text
-	WCHAR* buf = new WCHAR[MAX_LOADSTRING];
+	WCHAR* buf = malloc(sizeof(WCHAR)*MAX_LOADSTRING);
 	if(start)
 		LoadString(hInst, IDS_STARTBUTTON, buf, MAX_LOADSTRING);
 	else
 		LoadString(hInst, IDS_STOPBUTTON, buf, MAX_LOADSTRING);
 	SetWindowText(hStartButton, buf);
-	delete buf;
+	free(buf);
 
 	// enable/disable Start button
 	LONG style = GetWindowLong(hStartButton, GWL_STYLE);
@@ -206,7 +206,7 @@ VOID CALLBACK ProcessorCallback(WCHAR* message)
 	} else {
 		SetWindowText(hStatusBar, L"Child thread finished");
 		// enable start button
-		SetStartButtonState(true);
+		SetStartButtonState(TRUE);
 		// clear memory
 		CloseHandle(hThread);
 		hThread = NULL;
@@ -229,13 +229,13 @@ void startProcess()
 		TerminateThread(hThread, -1);
 		CloseHandle(hThread);
 		hThread = NULL;
-		SetStartButtonState(true);
+		SetStartButtonState(TRUE);
 		return;
 	}
 	// clear listbox
 	SendMessage(hListBox, LB_RESETCONTENT, 0, 0);
 	// process itself
-	PROCESSFILE* pf = new PROCESSFILE;
+	PROCESSFILE* pf = malloc(sizeof(PROCESSFILE));
 	FastFillMemory(pf, sizeof(PROCESSFILE), 0);
 	pf->fileName = lpFileName;
 	pf->minLength = nMinLength;
@@ -271,18 +271,18 @@ void startProcess()
 		break;
 	default:
 		{
-			WCHAR* szMessageText = new WCHAR[MAX_LOADSTRING];
+			WCHAR* szMessageText = malloc(sizeof(WCHAR)*MAX_LOADSTRING);
 			LoadString(hInst, IDS_NOTSUPPORTED, szMessageText, MAX_LOADSTRING);
 			MessageBox(hWnd, szMessageText, NULL, MB_OK);
-			delete szMessageText;
+			free(szMessageText);
 		}
-		delete pf;
+		free(pf);
 		return;
 	}
 	
 	hThread = CreateThread(NULL, 0, &ProcessFile, pf, 0, NULL);
 	// disable start button
-	SetStartButtonState(false);
+	SetStartButtonState(FALSE);
 	// verbose
 	SetWindowText(hStatusBar, L"Child thread started");
 }
@@ -291,13 +291,13 @@ void openFile(LPWSTR lpszFileName)
 {
 	if(lpszFileName == NULL) return;
 	if(hThread) {
-		WCHAR* szMessageTitle = new WCHAR[MAX_LOADSTRING],
-			 * szMessageText = new WCHAR[MAX_LOADSTRING];
+		WCHAR* szMessageTitle = malloc(sizeof(WCHAR)*MAX_LOADSTRING),
+			 * szMessageText = malloc(sizeof(WCHAR)*MAX_LOADSTRING);
 		LoadString(hInst, IDS_OPENFILE, szMessageTitle, MAX_LOADSTRING);
 		LoadString(hInst, IDS_TERMINATETHREAD, szMessageText, MAX_LOADSTRING);
 		int res = MessageBox(hWnd, szMessageText, szMessageTitle, MB_YESNO);
-		delete szMessageText;
-		delete szMessageTitle;
+		free(szMessageText);
+		free(szMessageTitle);
 
 		if(res == IDYES) {
 			TerminateThread(hThread, -1);
@@ -307,19 +307,19 @@ void openFile(LPWSTR lpszFileName)
 		else return;
 	}
 	// clear previously allocated memory
-	if(lpFileName) delete lpFileName;
+	if(lpFileName) free(lpFileName);
 	// save new file name
 	lpFileName = lpszFileName;
 	// change window title
-	WCHAR* buf = new WCHAR[MAX_PATH + MAX_LOADSTRING + 4];
+	WCHAR* buf = malloc(sizeof(WCHAR)*(MAX_PATH + MAX_LOADSTRING + 4));
 	buf[0] = L'\0';
 	widecat(buf, lpFileName);
 	widecat(buf, L" - ");
 	widecat(buf, szTitle);
 	SetWindowText(hWnd, buf);
-	delete buf;
+	free(buf);
 	if(hStartButton) {
-		SetStartButtonState(true);
+		SetStartButtonState(TRUE);
 	}
 }
 
@@ -332,36 +332,36 @@ void saveResult(LPWSTR lpszFileName)
 		// create file
 		HANDLE hFile = CreateFile(lpszFileName, GENERIC_WRITE, FILE_SHARE_READ, NULL, OPEN_ALWAYS, 0, 0);
 		if(hFile == INVALID_HANDLE_VALUE) {
-			ErrorReport(L"opening file", FALSE);
+			ErrorReport(L"opening file");
 			return;
 		}
 		// write
 		DWORD written;
 		WCHAR bom = 0xFEFF;
 		WCHAR newLine[2] = { 0x0D, 0x0A };
-		bool fail = false;
+		BOOL fail = FALSE;
 		WriteFile(hFile, &bom, sizeof(bom), &written, NULL);
 		for(int i = 0; i < num; i++) {
 			SIZE_T len = SendMessage(hListBox, LB_GETTEXTLEN, i, 0);
-			WCHAR* buf = new WCHAR[len+1];
+			WCHAR* buf = malloc(sizeof(WCHAR)*(len+1));
 			SendMessage(hListBox, LB_GETTEXT, i, (LPARAM)buf);
 			if (!WriteFile(hFile, buf, len*sizeof(WCHAR), &written, NULL) ||
 				!WriteFile(hFile, newLine, sizeof(newLine), &written, NULL)) {
-					delete buf;
-					fail = true;
+					free(buf);
+					fail = TRUE;
 					goto __loop_end;
 			}
-			delete buf;
+			free(buf);
 		}
 
 __loop_end:
 		// dispose
-		if(fail) ErrorReport(L"writing file", FALSE);
+		if(fail) ErrorReport(L"writing file");
 		CloseHandle(hFile);
 	}
 #ifdef _DEBUG
 	else {
-		ErrorReport(L"exporting", FALSE);
+		ErrorReport(L"exporting");
 	}
 #endif
 }
@@ -372,10 +372,10 @@ void sel_Changed()
 	if((idx = SendMessage(hListBox, LB_GETCURSEL, 0, 0)) != LB_ERR) {
 		// if any element selected
 		SIZE_T len = SendMessage(hListBox, LB_GETTEXTLEN, idx, 0);
-		WCHAR* buf = new WCHAR[len+1];
+		WCHAR* buf = malloc(sizeof(WCHAR)*(len+1));
 		SendMessage(hListBox, LB_GETTEXT, idx, (LPARAM)buf);
 		SetWindowText(hTextBox, buf);
-		delete buf;
+		free(buf);
 	}
 }
 
@@ -383,20 +383,20 @@ void FilterString()
 {
 	int idx = SendMessage(hListBox, LB_GETCURSEL, 0, 0);
 	SIZE_T len = SendMessage(hListBox, LB_GETTEXTLEN, idx, 0);
-	WCHAR* sFilter = new WCHAR[len+1];
+	WCHAR* sFilter = malloc(sizeof(WCHAR)*(len+1));
 	SendMessage(hListBox, LB_GETTEXT, idx, (LPARAM)sFilter);
 	int i;
 	while((i = SendMessage(hListBox, LB_FINDSTRINGEXACT, -1, (LPARAM)sFilter)) != LB_ERR) {
 		SendMessage(hListBox, LB_DELETESTRING, i, 0);
 	}
-	delete sFilter;
+	free(sFilter);
 }
 
 void BlackListString()
 {
 	int idx = SendMessage(hListBox, LB_GETCURSEL, 0, 0);
 	SIZE_T len = SendMessage(hListBox, LB_GETTEXTLEN, idx, 0);
-	WCHAR* sFilter = new WCHAR[len+1];
+	WCHAR* sFilter = malloc(sizeof(WCHAR)*(len+1));
 	SendMessage(hListBox, LB_GETTEXT, idx, (LPARAM)sFilter);
 
 	// Add to black list
@@ -426,7 +426,7 @@ void BlackListString()
 	while((i = SendMessage(hListBox, LB_FINDSTRINGEXACT, -1, (LPARAM)sFilter)) != LB_ERR) {
 		SendMessage(hListBox, LB_DELETESTRING, i, 0);
 	}
-	delete sFilter;
+	free(sFilter);
 }
 
 void nullTerm()
@@ -436,17 +436,17 @@ void nullTerm()
 
 	if(state & MF_CHECKED) {
 		if(GetMenuState(hMenu, ID_ENCODING_UTF, MF_BYCOMMAND) & MF_CHECKED) {
-			WCHAR* szMessageText = new WCHAR[MAX_LOADSTRING];
+			WCHAR* szMessageText = malloc(sizeof(WCHAR)*MAX_LOADSTRING);
 			LoadString(hInst, IDS_NOTSUPPORTED, szMessageText, MAX_LOADSTRING);
 			MessageBox(hWnd, szMessageText, NULL, MB_OK);
-			delete szMessageText;
+			free(szMessageText);
 		} else {
-			bNullTerm = false;
+			bNullTerm = FALSE;
 			CheckMenuItem(hMenu, ID_NULLTERM, MF_UNCHECKED | MF_BYCOMMAND);
 		}
 	}
 	else {
-		bNullTerm = true;
+		bNullTerm = TRUE;
 		CheckMenuItem(hMenu, ID_NULLTERM, MF_CHECKED | MF_BYCOMMAND);
 	}
 }
@@ -477,7 +477,7 @@ void window_Create(HWND hWnd)
 		WS_BORDER | WS_VISIBLE | WS_CHILD | LBS_HASSTRINGS | LBS_NOTIFY | WS_VSCROLL,
 		0, 0, 0, 0, hWnd, (HMENU)IDM_LISTBOX, hInst, NULL);
 #ifdef _DEBUG
-	if(!hListBox) ErrorReport(L"creating list box");
+	if(!hListBox) FatalError(L"creating list box");
 #endif
 
 	// Text Box
@@ -485,7 +485,7 @@ void window_Create(HWND hWnd)
 		WS_VISIBLE | WS_CHILD | WS_HSCROLL | WS_VSCROLL | ES_AUTOHSCROLL | ES_AUTOVSCROLL | ES_LEFT | ES_READONLY | ES_MULTILINE,
 		0, 0, 0, 0, hWnd, (HMENU)IDM_TEXTBOX, hInst, NULL);
 #ifdef _DEBUG
-	if(!hTextBox) ErrorReport(L"creating text box");
+	if(!hTextBox) FatalError(L"creating text box");
 #endif
 
 	// Status Bar
@@ -497,7 +497,7 @@ void window_Create(HWND hWnd)
 		WS_VISIBLE | WS_CHILD | SBARS_SIZEGRIP,
 		0, 0, 0, 0, hWnd, (HMENU)IDM_STATUSBAR, hInst, NULL);
 #ifdef _DEBUG
-	if(!hStatusBar) ErrorReport(L"creating status bar");
+	if(!hStatusBar) FatalError(L"creating status bar");
 #endif
 
 	// Progress Bar
@@ -506,15 +506,15 @@ void window_Create(HWND hWnd)
 		0, 0, 0, 0, hWnd, 0, hInst, NULL);
 
 	// Start Button
-	WCHAR* buf = new WCHAR[MAX_LOADSTRING];
+	WCHAR* buf = malloc(sizeof(WCHAR)*MAX_LOADSTRING);
 	LoadString(hInst, IDS_STARTBUTTON, buf, MAX_LOADSTRING);
 	hStartButton = CreateWindow(L"BUTTON", buf,
 		WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON |
 		(lpFileName ? 0 : WS_DISABLED),
 		0, 0, 0, 0, hWnd, (HMENU)IDM_STARTBUTTON, hInst, NULL);
-	delete buf;
+	free(buf);
 #ifdef _DEBUG
-	if(!hStartButton) ErrorReport(L"creating start button");
+	if(!hStartButton) FatalError(L"creating start button");
 #endif
 }
 
@@ -535,7 +535,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	switch (message)
 	{
 	case WM_DROPFILES: {
-		WCHAR* lpszFile = new WCHAR[MAX_PATH];
+		WCHAR* lpszFile = malloc(sizeof(WCHAR)*MAX_PATH);
 		HDROP hDrop = (HDROP)wParam;
 		DragQueryFile(hDrop, 0, lpszFile, MAX_PATH);
 		openFile(lpszFile);
@@ -599,7 +599,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		// encodings
 		case ID_ENCODING_UTF:
-			bNullTerm = true;
+			bNullTerm = TRUE;
 			CheckMenuItem(GetMenu(hWnd), ID_NULLTERM, MF_CHECKED | MF_BYCOMMAND);
 		case ID_ENCODING_UCS2LE:
 		case ID_ENCODING_WINDOWS:
